@@ -13,9 +13,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/home/louis/Documents/Badgeuse/badgeuse");
 
+
+    // DATABASE
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("/home/louis/Documents/Git/badgeuse-polytech/Badgeuse/badgeuse");
     if (!db.open())
     {
         QMessageBox::critical(nullptr, QObject::tr("Database Error"),
@@ -24,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     model = new QSqlTableModel(this, db);
-
     model->setTable("student");
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
