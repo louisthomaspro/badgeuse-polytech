@@ -57,10 +57,7 @@
             <item>
              <widget class="QTableView" name="tv_students">
               <property name="styleSheet">
-               <string notr="true">QTableView::item:focus
-{
-	selection-background-color: yellow;
-}</string>
+               <string notr="true"/>
               </property>
              </widget>
             </item>

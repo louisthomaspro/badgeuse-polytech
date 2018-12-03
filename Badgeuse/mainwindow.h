@@ -5,6 +5,10 @@
 #include <QSqlDatabase>
 #include <QSqlTableModel>
 #include <QMenu>
+#include <string>
+#include <iostream>
+
+using namespace std;
 
 namespace Ui {
 class MainWindow;
@@ -15,20 +19,27 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    struct Col {
+        string name;
+        bool show;
+    };
+
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-public slots:
+private slots:
     void refresh();
     void customHeaderMenuRequested(QPoint pos);
-    void toggleColumn();
+    void toggleColumn(QVariant v);
 
 private:
     Ui::MainWindow *ui;
     QSqlDatabase db;
     QSqlTableModel *model2;
     QSqlQueryModel *model;
+
+    Col absencesHeaderTitles[6] = { {"Prénom", 1},{"Nom", 1}, {"Promotion", 1}, {"Numéro étudiant", 1}, {"Mail", 0}, {"Numéro RFID", 0}};
 
 protected:
 };

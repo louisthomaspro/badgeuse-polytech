@@ -6,6 +6,7 @@
 #include <QSqlError>
 #include <QMessageBox>
 #include <QSqlTableModel>
+#include <QSortFilterProxyModel>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -31,24 +32,36 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     model = new QSqlTableModel(this, db);
-    QSqlQuery *query = new QSqlQuery("SELECT s.name, s.family_name, p.name, s.student_number from student s inner join promotion p on s.promotion_id = p.id");
+    QSqlQuery *query = new QSqlQuery("SELECT s.name, s.family_name, p.name, s.student_number, s.mail_adress, s.rfid_number from student s inner join promotion p on s.promotion_id = p.id");
     model->setQuery(*query);
-    model->setHeaderData(0, Qt::Horizontal, tr("Prénom"));
-    model->setHeaderData(1, Qt::Horizontal, tr("Nom"));
-    model->setHeaderData(2, Qt::Horizontal, tr("Promotion"));
-    model->setHeaderData(3, Qt::Horizontal, tr("Numéro étudiant"));
+
+    for (int i = 0; i < static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0])); i++) {
+        model->setHeaderData(i, Qt::Horizontal, tr(absencesHeaderTitles[i].name.c_str()));
+        ui->tv_students->setModel(model);
+        ui->tv_students->setColumnHidden(i, !absencesHeaderTitles[i].show);
+    }
+
+    QSortFilterProxyModel *sort_filter = new QSortFilterProxyModel(this);
+    sort_filter->setSourceModel(model);
+    sort_filter->sort (0);
+    ui->tv_students->setModel (sort_filter);
+
+    ui->tv_students->setSortingEnabled(true);
+    ui->tv_students->verticalHeader()->hide();
+    ui->tv_students->setSelectionBehavior(QAbstractItemView::SelectRows);
+//    QMessageBox msgBox;
+//    msgBox.setText(QString::number(static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0]))));
+//    msgBox.exec();
 
     ui->tv_students->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->tv_students->horizontalHeader(),
-            SIGNAL(customContextMenuRequested(QPoint)),
-            this,
+    ui->tv_students->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    ui->tv_students->show();
+
+    connect(ui->tv_students->horizontalHeader(), SIGNAL(customContextMenuRequested(QPoint)), this,
             SLOT(customHeaderMenuRequested(QPoint)));
 
 
-    ui->tv_students->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tv_students->setModel(model);
-    //ui->tv_students->setColumnHidden(2, true);
-    ui->tv_students->show();
 
     //connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(refresh()));
 
@@ -76,14 +89,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 void MainWindow::customHeaderMenuRequested(QPoint pos){
-    int column=ui->tv_students->horizontalHeader()->logicalIndexAt(pos);
+//    QModelIndex index = ui->tv_students->indexAt(pos);
 
     QMenu *menu=new QMenu(this);
-    static QAction *saveAction = new QAction("firstname : " + QString::number(ui->tv_students->isColumnHidden(0)), this);
-    connect(saveAction, SIGNAL(triggered()), this, SLOT(toggleColumn()));
-    menu->addAction(saveAction);
-    menu->addAction(new QAction("lastname : " + QString::number(ui->tv_students->isColumnHidden(1)), this));
-    menu->addAction(new QAction("promo : " + QString::number(ui->tv_students->isColumnHidden(2)), this));
+
+    for (int i = 0; i < static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0])); i++) {
+        QAction* fooAction = new QAction(absencesHeaderTitles[i].name.c_str(), this);
+        fooAction->setData(i);
+        fooAction->setCheckable(true);
+        fooAction->setChecked(absencesHeaderTitles[i].show);
+//        connect(fooAction, SIGNAL(triggered()), this, SLOT(toggleColumn()));
+        connect(fooAction, &QAction::triggered, [this, fooAction](){
+                toggleColumn(fooAction->data());
+            });
+        menu->addAction(fooAction);
+    }
+
     menu->popup(ui->tv_students->horizontalHeader()->viewport()->mapToGlobal(pos));
 }
 
@@ -91,9 +112,23 @@ void MainWindow::refresh()
 {
     //model->select();
 }
-void MainWindow::toggleColumn()
+void MainWindow::toggleColumn(QVariant v)
 {
-    ui->tv_students->setColumnHidden(0, !ui->tv_students->isColumnHidden(0));
+    bool exec = true;
+    bool newValue = ui->tv_students->isColumnHidden(v.toInt());
+
+    int cpt_show = 0;
+    if (!newValue) { // si on cache un élement
+        for (Col& s: absencesHeaderTitles){ // on compte le nombre d'élement affiché
+            if (s.show) cpt_show++;
+        }
+        if (cpt_show < 2) exec = false; // si il reste 1 element, on ne le cache pas
+    }
+
+    if (exec) {
+        absencesHeaderTitles[v.toInt()].show = newValue;
+        ui->tv_students->setColumnHidden(v.toInt(), !newValue);
+    }
 }
 
 MainWindow::~MainWindow()
