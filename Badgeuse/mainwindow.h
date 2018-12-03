@@ -27,8 +27,10 @@ public slots:
 private:
     Ui::MainWindow *ui;
     QSqlDatabase db;
-    QSqlTableModel *model;
     QSqlTableModel *model2;
+    QSqlQueryModel *model;
+
+protected:
 };
 
 #endif // MAINWINDOW_H

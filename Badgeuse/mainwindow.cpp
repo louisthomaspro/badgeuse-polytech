@@ -16,22 +16,27 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // DATABASE
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/home/louis/Documents/Git/badgeuse-polytech/Badgeuse/badgeuse");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+    db.setHostName("luigi21.heliohost.org");
+    db.setDatabaseName("luigi21_db");
+    db.setUserName("luigi21_db");
+    db.setPassword("polytech");
+    db.setPort(3306);
+
     if (!db.open())
     {
-        QMessageBox::critical(nullptr, QObject::tr("Database Error"),
-                              db.lastError().text());
+        QMessageBox::critical(nullptr, QObject::tr("Database Error"), db.lastError().text());
     }
 
 
+
     model = new QSqlTableModel(this, db);
-    model->setTable("student");
-    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-    model->select();
-    model->setHeaderData(0, Qt::Horizontal, tr("Nom"));
-    model->setHeaderData(1, Qt::Horizontal, tr("Prénom"));
+    QSqlQuery *query = new QSqlQuery("SELECT s.name, s.family_name, p.name, s.student_number from student s inner join promotion p on s.promotion_id = p.id");
+    model->setQuery(*query);
+    model->setHeaderData(0, Qt::Horizontal, tr("Prénom"));
+    model->setHeaderData(1, Qt::Horizontal, tr("Nom"));
     model->setHeaderData(2, Qt::Horizontal, tr("Promotion"));
+    model->setHeaderData(3, Qt::Horizontal, tr("Numéro étudiant"));
 
     ui->tv_students->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tv_students->horizontalHeader(),
@@ -84,7 +89,7 @@ void MainWindow::customHeaderMenuRequested(QPoint pos){
 
 void MainWindow::refresh()
 {
-    model->select();
+    //model->select();
 }
 void MainWindow::toggleColumn()
 {
