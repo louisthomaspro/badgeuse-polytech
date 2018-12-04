@@ -30,7 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
 
-
     model = new QSqlTableModel(this, db);
     QSqlQuery *query = new QSqlQuery("SELECT s.name, s.family_name, p.name, s.student_number, s.mail_adress, s.rfid_number from student s inner join promotion p on s.promotion_id = p.id");
     model->setQuery(*query);
@@ -41,17 +40,31 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->tv_students->setColumnHidden(i, !absencesHeaderTitles[i].show);
     }
 
-    QSortFilterProxyModel *sort_filter = new QSortFilterProxyModel(this);
+    sort_filter = new QSortFilterProxyModel(this);
     sort_filter->setSourceModel(model);
-    sort_filter->sort (0);
-    ui->tv_students->setModel (sort_filter);
+    sort_filter->sort(0);
+    ui->tv_students->setModel(sort_filter);
+
+
+    nmFilter = new QSortFilterProxyModel(model);
+    nmFilter->setSourceModel(model);
+    nmFilter->setFilterKeyColumn(0);
+
+    fnFilter = new QSortFilterProxyModel(model);
+    fnFilter->setSourceModel(nmFilter);
+    fnFilter->setFilterKeyColumn(1);
+
+    ui->tv_students->setModel(fnFilter);
+
+    connect(ui->lineEdit_4, &QLineEdit::textChanged,
+            this, &MainWindow::textFilterNameChanged);
+    connect(ui->lineEdit_5, &QLineEdit::textChanged,
+            this, &MainWindow::textFilterFamilyNameChanged);
+
 
     ui->tv_students->setSortingEnabled(true);
     ui->tv_students->verticalHeader()->hide();
     ui->tv_students->setSelectionBehavior(QAbstractItemView::SelectRows);
-//    QMessageBox msgBox;
-//    msgBox.setText(QString::number(static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0]))));
-//    msgBox.exec();
 
     ui->tv_students->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->tv_students->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -62,32 +75,25 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(customHeaderMenuRequested(QPoint)));
 
 
-
     //connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(refresh()));
 
 
-    model2 = new QSqlTableModel(this, db);
-
-    model2->setTable("presence");
-    model2->setEditStrategy(QSqlTableModel::OnManualSubmit);
-    model2->select();
-    model2->setHeaderData(0, Qt::Horizontal, tr("Prénom"));
-    model2->setHeaderData(1, Qt::Horizontal, tr("Nom"));
-    model2->setHeaderData(2, Qt::Horizontal, tr("Date/Heure début"));
-    model2->setHeaderData(3, Qt::Horizontal, tr("Date/Heure fin"));
-    model2->setHeaderData(4, Qt::Horizontal, tr("Etat"));
-
-    QModelIndex vIndex = model2->index(0,0);
-    model2->setData(vIndex, QBrush(Qt::red), Qt::ForegroundRole);
-
-
-
-    ui->tv_presence->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tv_presence->setModel(model2);
-    ui->tv_presence->show();
-
 
 }
+
+void MainWindow::textFilterNameChanged()
+{
+    QRegExp regExp(ui->lineEdit_4->text());
+    nmFilter->setFilterRegExp(regExp);
+}
+
+void MainWindow::textFilterFamilyNameChanged()
+{
+    QRegExp regExp(ui->lineEdit_5->text());
+    fnFilter->setFilterRegExp(regExp);
+}
+
+
 void MainWindow::customHeaderMenuRequested(QPoint pos){
 //    QModelIndex index = ui->tv_students->indexAt(pos);
 

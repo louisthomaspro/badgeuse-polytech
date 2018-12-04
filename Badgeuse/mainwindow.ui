@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -55,7 +55,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QTableView" name="tv_students">
+             <widget class="QTableView" name="tv_absences">
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -590,7 +590,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QTableView" name="tv_presence"/>
+             <widget class="QTableView" name="tv_students"/>
             </item>
            </layout>
           </item>
