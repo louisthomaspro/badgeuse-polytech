@@ -51,6 +51,9 @@ private:
 
     Col absencesHeaderTitles[6] = { {"Prénom", 1},{"Nom", 1}, {"Promotion", 1}, {"Numéro étudiant", 1}, {"Mail", 0}, {"Numéro RFID", 0}};
 
+
+
+
 protected:
 };
 

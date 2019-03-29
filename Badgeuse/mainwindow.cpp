@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QSqlTableModel>
 #include <QSortFilterProxyModel>
+#include <QProgressDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -15,23 +16,32 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 
-
+    // sudo mysql -u root -p
     // DATABASE
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("luigi21.heliohost.org");
-    db.setDatabaseName("luigi21_db");
-    db.setUserName("luigi21_db");
-    db.setPassword("polytech");
+    db.setHostName("localhost");
+    db.setDatabaseName("badgeuse");
+    db.setUserName("root");
+    db.setPassword("root");
     db.setPort(3306);
+    db.setConnectOptions("MYSQL_OPT_CONNECT_TIMEOUT=4");
+
+
+
 
     if (!db.open())
     {
-        QMessageBox::critical(nullptr, QObject::tr("Database Error"), db.lastError().text());
+        QString msg = "Impossible de se connecter à la base de données. Etes vous bien connecté au réseau de l'université ? Si le problème persiste, merci de contacter un administrateur.";
+        QMessageBox::critical(nullptr, QObject::tr("Problème de connexion à la base de données"), msg);
+//      QMessageBox::critical(nullptr, QObject::tr("Database Error"), db.lastError().text());
+        parent->close();
     }
+
+    ui->statusBar->showMessage(tr("Connexion à la base de données..."));
 
 
     model = new QSqlTableModel(this, db);
-    QSqlQuery *query = new QSqlQuery("SELECT s.name, s.family_name, p.name, s.student_number, s.mail_adress, s.rfid_number from student s inner join promotion p on s.promotion_id = p.id");
+    QSqlQuery *query = new QSqlQuery("SELECT s.firstname, s.lastname, s.student_number, s.mail_adress, s.rfid_number from student s inner join promotion p on s.promotion_id = p.id");
     model->setQuery(*query);
 
     for (int i = 0; i < static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0])); i++) {
@@ -62,7 +72,6 @@ MainWindow::MainWindow(QWidget *parent) :
             this, &MainWindow::textFilterFamilyNameChanged);
 
 
-    ui->tv_students->setSortingEnabled(true);
     ui->tv_students->verticalHeader()->hide();
     ui->tv_students->setSelectionBehavior(QAbstractItemView::SelectRows);
 

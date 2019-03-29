@@ -27,10 +27,12 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    badgeusemodel.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    badgeusemodel.h
 
 FORMS += \
         mainwindow.ui
