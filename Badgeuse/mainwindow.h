@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <QSortFilterProxyModel>
+#include "badgeusemodel.h"
 
 using namespace std;
 
@@ -39,7 +40,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QSqlDatabase db;
+    QSqlDatabase _db;
     QSqlTableModel *model2;
     QSqlQueryModel *model;
     QSortFilterProxyModel *sort_filter;
@@ -47,6 +48,8 @@ private:
     QRegExp familyNameRegExp;
     QSortFilterProxyModel *nmFilter;
     QSortFilterProxyModel *fnFilter;
+
+    BadgeuseModel *_badgeuseModel;
 
 
     Col absencesHeaderTitles[6] = { {"Prénom", 1},{"Nom", 1}, {"Promotion", 1}, {"Numéro étudiant", 1}, {"Mail", 0}, {"Numéro RFID", 0}};

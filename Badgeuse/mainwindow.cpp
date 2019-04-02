@@ -15,73 +15,56 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
-    // sudo mysql -u root -p
-    // DATABASE
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("localhost");
-    db.setDatabaseName("badgeuse");
-    db.setUserName("root");
-    db.setPassword("root");
-    db.setPort(3306);
-    db.setConnectOptions("MYSQL_OPT_CONNECT_TIMEOUT=4");
+    _badgeuseModel = new BadgeuseModel(ui->tv_absences);
 
 
+    ui->tv_absences->setModel(_badgeuseModel->getModel());
+
+//    ui->statusBar->showMessage(tr("Connexion à la base de données..."));
 
 
-    if (!db.open())
-    {
-        QString msg = "Impossible de se connecter à la base de données. Etes vous bien connecté au réseau de l'université ? Si le problème persiste, merci de contacter un administrateur.";
-        QMessageBox::critical(nullptr, QObject::tr("Problème de connexion à la base de données"), msg);
-//      QMessageBox::critical(nullptr, QObject::tr("Database Error"), db.lastError().text());
-        parent->close();
-    }
+//    model = new QSqlTableModel(this, _db);
+//    QSqlQuery *query = new QSqlQuery("SELECT s.firstname, s.lastname, s.student_number, s.mail_adress, s.rfid_number from student s inner join promotion p on s.promotion_id = p.id");
+//    model->setQuery(*query);
 
-    ui->statusBar->showMessage(tr("Connexion à la base de données..."));
+//    for (int i = 0; i < static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0])); i++) {
+//        model->setHeaderData(i, Qt::Horizontal, tr(absencesHeaderTitles[i].name.c_str()));
+//        ui->tv_students->setModel(model);
+//        ui->tv_students->setColumnHidden(i, !absencesHeaderTitles[i].show);
+//    }
 
-
-    model = new QSqlTableModel(this, db);
-    QSqlQuery *query = new QSqlQuery("SELECT s.firstname, s.lastname, s.student_number, s.mail_adress, s.rfid_number from student s inner join promotion p on s.promotion_id = p.id");
-    model->setQuery(*query);
-
-    for (int i = 0; i < static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0])); i++) {
-        model->setHeaderData(i, Qt::Horizontal, tr(absencesHeaderTitles[i].name.c_str()));
-        ui->tv_students->setModel(model);
-        ui->tv_students->setColumnHidden(i, !absencesHeaderTitles[i].show);
-    }
-
-    sort_filter = new QSortFilterProxyModel(this);
-    sort_filter->setSourceModel(model);
-    sort_filter->sort(0);
-    ui->tv_students->setModel(sort_filter);
+//    sort_filter = new QSortFilterProxyModel(this);
+//    sort_filter->setSourceModel(model);
+//    sort_filter->sort(0);
+//    ui->tv_students->setModel(sort_filter);
 
 
-    nmFilter = new QSortFilterProxyModel(model);
-    nmFilter->setSourceModel(model);
-    nmFilter->setFilterKeyColumn(0);
+//    nmFilter = new QSortFilterProxyModel(model);
+//    nmFilter->setSourceModel(model);
+//    nmFilter->setFilterKeyColumn(0);
 
-    fnFilter = new QSortFilterProxyModel(model);
-    fnFilter->setSourceModel(nmFilter);
-    fnFilter->setFilterKeyColumn(1);
+//    fnFilter = new QSortFilterProxyModel(model);
+//    fnFilter->setSourceModel(nmFilter);
+//    fnFilter->setFilterKeyColumn(1);
 
-    ui->tv_students->setModel(fnFilter);
+//    ui->tv_students->setModel(fnFilter);
 
-    connect(ui->lineEdit_4, &QLineEdit::textChanged,
-            this, &MainWindow::textFilterNameChanged);
-    connect(ui->lineEdit_5, &QLineEdit::textChanged,
-            this, &MainWindow::textFilterFamilyNameChanged);
+//    connect(ui->lineEdit_4, &QLineEdit::textChanged,
+//            this, &MainWindow::textFilterNameChanged);
+//    connect(ui->lineEdit_5, &QLineEdit::textChanged,
+//            this, &MainWindow::textFilterFamilyNameChanged);
 
 
-    ui->tv_students->verticalHeader()->hide();
-    ui->tv_students->setSelectionBehavior(QAbstractItemView::SelectRows);
+//    ui->tv_students->verticalHeader()->hide();
+//    ui->tv_students->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    ui->tv_students->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-    ui->tv_students->setEditTriggers(QAbstractItemView::NoEditTriggers);
+//    ui->tv_students->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+//    ui->tv_students->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    ui->tv_students->show();
+//    ui->tv_students->show();
 
-    connect(ui->tv_students->horizontalHeader(), SIGNAL(customContextMenuRequested(QPoint)), this,
-            SLOT(customHeaderMenuRequested(QPoint)));
+//    connect(ui->tv_students->horizontalHeader(), SIGNAL(customContextMenuRequested(QPoint)), this,
+//            SLOT(customHeaderMenuRequested(QPoint)));
 
 
     //connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(refresh()));
