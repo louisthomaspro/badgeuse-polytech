@@ -1,9 +1,9 @@
 #include "badgeusemodel.h"
 
-BadgeuseModel::BadgeuseModel(QTableView* parent)
+BadgeuseModel::BadgeuseModel(QObject* parent) : QObject(parent)
 {
     initDbConnection();
-    _model = new QSqlRelationalTableModel(parent);
+    _presencesModel = new PresencesModel(this);
     initModels();
 }
 
@@ -24,17 +24,13 @@ void BadgeuseModel::initDbConnection()
 }
 void BadgeuseModel::initModels()
 {
-     _model->setTable("scans");
+    _presencesModel->init();
+    // init etudiants
 
-     // Populate the model:
-     if (!_model->select()) {
-         qDebug("Populate failed ");
-         qDebug(_model->lastError().text().toStdString().c_str());
-         return;
-     }
+    // init view
 }
 
-QSqlRelationalTableModel* BadgeuseModel::getModel()
+PresencesModel* BadgeuseModel::getPresencesModel()
 {
-    return _model;
+    return _presencesModel;
 }

@@ -15,15 +15,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _badgeuseModel = new BadgeuseModel(ui->tv_absences);
+    _badgeuseModel = new BadgeuseModel(ui->tv_presences);
 
 
-    ui->tv_absences->setModel(_badgeuseModel->getModel());
+    ui->tv_presences->setModel(_badgeuseModel->getPresencesModel());
 
 //    ui->statusBar->showMessage(tr("Connexion à la base de données..."));
 
 
-//    model = new QSqlTableModel(this, _db);
+//    model = new presencesModel(this, _db);
 //    QSqlQuery *query = new QSqlQuery("SELECT s.firstname, s.lastname, s.student_number, s.mail_adress, s.rfid_number from student s inner join promotion p on s.promotion_id = p.id");
 //    model->setQuery(*query);
 

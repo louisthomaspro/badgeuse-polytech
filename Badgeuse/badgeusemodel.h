@@ -6,21 +6,26 @@
 #include <QTableView>
 #include <QSqlRelationalTableModel>
 #include <QSqlError>
+#include "presencesmodel.h"
 
-class BadgeuseModel
+class BadgeuseModel : public QObject
 {
+
+    Q_OBJECT
+
+
 public:
-    BadgeuseModel(QTableView* parent);
+    BadgeuseModel(QObject* parent = nullptr);
     void initDbConnection();
     void initModels();
-    QSqlRelationalTableModel *getModel();
+    PresencesModel *getPresencesModel();
 
 private:
 
 
 private:
     QSqlDatabase _db;
-    QSqlRelationalTableModel *_model;
+    PresencesModel *_presencesModel;
 
 };
 

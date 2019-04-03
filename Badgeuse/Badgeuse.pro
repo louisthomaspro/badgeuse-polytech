@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,11 +28,13 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    badgeusemodel.cpp
+    badgeusemodel.cpp \
+    presencesmodel.cpp
 
 HEADERS += \
         mainwindow.h \
-    badgeusemodel.h
+    badgeusemodel.h \
+    presencesmodel.h
 
 FORMS += \
         mainwindow.ui

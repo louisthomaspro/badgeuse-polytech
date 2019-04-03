@@ -41,7 +41,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QSqlDatabase _db;
-    QSqlTableModel *model2;
+    PresencesModel *model2;
     QSqlQueryModel *model;
     QSortFilterProxyModel *sort_filter;
     QRegExp nameRegExp;
