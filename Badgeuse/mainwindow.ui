@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -325,7 +325,7 @@
            <widget class="QScrollArea" name="scrollArea_2">
             <property name="maximumSize">
              <size>
-              <width>300</width>
+              <width>315</width>
               <height>16777215</height>
              </size>
             </property>
@@ -337,7 +337,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>298</width>
+               <width>313</width>
                <height>600</height>
               </rect>
              </property>

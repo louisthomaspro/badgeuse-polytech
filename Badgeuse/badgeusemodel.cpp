@@ -4,6 +4,7 @@ BadgeuseModel::BadgeuseModel(QObject* parent) : QObject(parent)
 {
     initDbConnection();
     _presencesModel = new PresencesModel(this);
+    _studentsModel = new StudentsModel(this);
     initModels();
 }
 
@@ -25,12 +26,9 @@ void BadgeuseModel::initDbConnection()
 void BadgeuseModel::initModels()
 {
     _presencesModel->init();
-    // init etudiants
-
+    _studentsModel->init();
     // init view
 }
 
-PresencesModel* BadgeuseModel::getPresencesModel()
-{
-    return _presencesModel;
-}
+PresencesModel* BadgeuseModel::getPresencesModel() { return _presencesModel; }
+StudentsModel* BadgeuseModel::getStudentsModel() { return _studentsModel; }

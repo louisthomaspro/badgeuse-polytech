@@ -1,11 +1,11 @@
-#include "presencesmodel.h"
+#include "studentsmodel.h"
 
-PresencesModel::PresencesModel(QObject* parent) : QSqlQueryModel(parent)
+StudentsModel::StudentsModel(QObject* parent) : QSqlQueryModel(parent)
 {
 
 }
 
-QVariant PresencesModel::data(const QModelIndex &index, int role) const
+QVariant StudentsModel::data(const QModelIndex &index, int role) const
 {
     QVariant value = QSqlQueryModel::data(index, role);
     if (value.isValid() && role == Qt::DisplayRole) {
@@ -21,29 +21,26 @@ QVariant PresencesModel::data(const QModelIndex &index, int role) const
     return value;
 }
 
-void PresencesModel::init()
+void StudentsModel::init()
 {
     QSqlQuery query("select \
-                    s.uuid,\
+                    stu.uuid,\
                     stu.studentNumber,\
                     stu.firstname,\
                     stu.lastname,\
+                    stu.degreeYear,\
+                    stu.mail,\
+                    t.name,\
                     stu.`group`,\
-                    o.name as option_name,\
-                    s.dateTimeEntry,\
-                    s.DateTimeExit\
-                from badgeuse.scans s\
-                left join badgeuse.cards c on c.rfidNumber = s.rfidNumber\
-                left join badgeuse.students stu on stu.uuid = c.studentUuid\
+                    o.name\
+                from badgeuse.students stu\
                 left join badgeuse.training t on stu.trainingUuid = t.uuid\
                 left join badgeuse.rlToptionsStudents ostu on ostu.studentsUuid = stu.uuid\
-                left join badgeuse.toptions o on o.uuid = ostu.toptionsUuid\
-                WHERE\
-                stu.studentNumber is not null;");
+                left join badgeuse.toptions o on o.uuid = ostu.toptionsUuid;");
     setQuery(query);
 }
 
 
-void PresencesModel::setQuery(const QSqlQuery &query) {
+void StudentsModel::setQuery(const QSqlQuery &query) {
     QSqlQueryModel::setQuery(query);
 }

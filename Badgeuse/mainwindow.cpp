@@ -15,10 +15,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _badgeuseModel = new BadgeuseModel(ui->tv_presences);
+    _badgeuseModel = new BadgeuseModel(this);
 
 
     ui->tv_presences->setModel(_badgeuseModel->getPresencesModel());
+    ui->tv_students->setModel(_badgeuseModel->getStudentsModel());
+
 
 //    ui->statusBar->showMessage(tr("Connexion à la base de données..."));
 

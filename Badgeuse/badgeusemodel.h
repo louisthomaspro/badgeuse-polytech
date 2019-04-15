@@ -7,6 +7,7 @@
 #include <QSqlRelationalTableModel>
 #include <QSqlError>
 #include "presencesmodel.h"
+#include "studentsmodel.h"
 
 class BadgeuseModel : public QObject
 {
@@ -19,6 +20,7 @@ public:
     void initDbConnection();
     void initModels();
     PresencesModel *getPresencesModel();
+    StudentsModel *getStudentsModel();
 
 private:
 
@@ -26,6 +28,8 @@ private:
 private:
     QSqlDatabase _db;
     PresencesModel *_presencesModel;
+    StudentsModel *_studentsModel;
+
 
 };
 

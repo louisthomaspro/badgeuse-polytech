@@ -29,12 +29,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     badgeusemodel.cpp \
-    presencesmodel.cpp
+    presencesmodel.cpp \
+    studentsmodel.cpp
 
 HEADERS += \
         mainwindow.h \
     badgeusemodel.h \
-    presencesmodel.h
+    presencesmodel.h \
+    studentsmodel.h
 
 FORMS += \
         mainwindow.ui
