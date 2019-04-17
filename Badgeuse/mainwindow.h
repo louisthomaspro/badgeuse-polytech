@@ -39,6 +39,7 @@ private slots:
 //    void textFilterFamilyNameChanged();
 //    void textFilterNameChanged();
     void openStudentsDialog();
+    void deleteStudent();
 
 
 private:

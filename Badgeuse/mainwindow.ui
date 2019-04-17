@@ -532,7 +532,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_6">
+               <widget class="QPushButton" name="pb_deletestudent">
                 <property name="text">
                  <string>Supprimer</string>
                 </property>
@@ -545,11 +545,17 @@
               <property name="showDropIndicator" stdset="0">
                <bool>true</bool>
               </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
               <property name="selectionMode">
                <enum>QAbstractItemView::SingleSelection</enum>
               </property>
               <property name="selectionBehavior">
                <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="gridStyle">
+               <enum>Qt::DashLine</enum>
               </property>
               <property name="sortingEnabled">
                <bool>true</bool>

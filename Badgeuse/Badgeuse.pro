@@ -38,7 +38,8 @@ HEADERS += \
     badgeusemodel.h \
     presencesmodel.h \
     studentsmodel.h \
-    studentsdialog.h
+    studentsdialog.h \
+    qchecklist.h
 
 FORMS += \
         mainwindow.ui \

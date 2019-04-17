@@ -7,6 +7,9 @@
 #include <QDebug>
 #include <QDate>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QListIterator>
+#include "qchecklist.h"
 
 
 namespace Ui {
@@ -33,6 +36,7 @@ private slots:
 private:
     Ui::StudentsDialog *ui;
     QList<QString> _values;
+    QCheckList *_optionsList;
 };
 
 #endif // STUDENTSDIALOG_H

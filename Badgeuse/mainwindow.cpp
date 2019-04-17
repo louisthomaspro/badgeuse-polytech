@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->pb_addstudent, SIGNAL(clicked()), this, SLOT(openStudentsDialog()));
     connect(ui->pb_modifystudent, SIGNAL(clicked()), this, SLOT(openStudentsDialog()));
+    connect(ui->pb_deletestudent, SIGNAL(clicked()), this, SLOT(deleteStudent()));
 
 
 //    ui->statusBar->showMessage(tr("Connexion à la base de données..."));
@@ -84,6 +85,43 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+void MainWindow::deleteStudent() {
+    QString selectedUuid;
+    qDebug() << "Click delete";
+
+    QModelIndexList selectedList = ui->tv_students->selectionModel()->selectedRows();
+    if (selectedList.length() > 0) {
+        selectedUuid = ui->tv_students->model()->data(ui->tv_students->model()->index(selectedList.at(0).row(),0)).toString();
+
+        QMessageBox msgBox;
+        msgBox.setText("The document has been modified.");
+        msgBox.setInformativeText("Do you want to save your changes?");
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        int ret = msgBox.exec();
+
+        if (ret == QMessageBox::Yes) {
+            // Delete in database
+            QSqlQuery queryDeleteStudent("delete from badgeuse.students where uuid = UNHEX(?)");
+            queryDeleteStudent.addBindValue(selectedUuid);
+
+            if(!queryDeleteStudent.exec()) {
+                qDebug() << "Error:" << queryDeleteStudent.lastError().text() << ", Code:" << queryDeleteStudent.lastError().number() << ", Type:" << queryDeleteStudent.lastError().type();
+                return;
+            } else {
+                qDebug() << "Student " << selectedUuid << " deleted.";
+                _badgeuseModel->getStudentsModel()->init();
+            }
+
+        }
+
+    } else {
+        QMessageBox::information(this, "Attention", "Veuillez selectionner une ligne.");
+        return;
+    }
+
+}
+
 void MainWindow::openStudentsDialog()
 {
 
@@ -100,16 +138,14 @@ void MainWindow::openStudentsDialog()
         }
 
 
-
-
     }
 
 
     _studentsDialog = new StudentsDialog(this, selectedUuid);
-    if (_studentsDialog->exec() == QDialog::Accepted ) {
-        qDebug() << "Save";
+    if (_studentsDialog->exec() == QDialog::Accepted) {
+        qDebug() << "After closed";
+        _badgeuseModel->getStudentsModel()->init();
         QList<QString> result = _studentsDialog->getValues();
-        qDebug() << result;
     }
     delete _studentsDialog;
 }

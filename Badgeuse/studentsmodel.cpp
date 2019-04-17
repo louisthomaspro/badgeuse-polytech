@@ -23,20 +23,21 @@ QVariant StudentsModel::data(const QModelIndex &index, int role) const
 
 void StudentsModel::init()
 {
-    QSqlQuery query("select \
-                    stu.uuid,\
-                    stu.studentNumber,\
-                    stu.firstname,\
-                    stu.lastname,\
-                    stu.degreeYear,\
-                    stu.mail,\
-                    t.name,\
-                    stu.`group`,\
-                    o.name\
-                from badgeuse.students stu\
-                left join badgeuse.training t on stu.trainingUuid = t.uuid\
-                left join badgeuse.rlToptionsStudents ostu on ostu.studentsUuid = stu.uuid\
-                left join badgeuse.toptions o on o.uuid = ostu.toptionsUuid;");
+    QSqlQuery query("select "
+                    "stu.uuid,"
+                    "stu.studentNumber as numero_etudiant,"
+                    "stu.firstname as prenom,"
+                    "stu.lastname as nom,"
+                    "stu.degreeYear as promotion,"
+                    "stu.mail,"
+                    "t.name as formation,"
+                    "stu.`group` as groupe,"
+                    "GROUP_CONCAT(DISTINCT o.name SEPARATOR ', ') as options "
+                "from badgeuse.students stu "
+                "left join badgeuse.training t on stu.trainingUuid = t.uuid "
+                "left join badgeuse.rlToptionsStudents ostu on ostu.studentsUuid = stu.uuid "
+                "left join badgeuse.toptions o on o.uuid = ostu.toptionsUuid "
+                "group by stu.uuid;");
     setQuery(query);
 }
 
