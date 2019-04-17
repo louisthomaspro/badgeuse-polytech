@@ -30,16 +30,19 @@ SOURCES += \
         mainwindow.cpp \
     badgeusemodel.cpp \
     presencesmodel.cpp \
-    studentsmodel.cpp
+    studentsmodel.cpp \
+    studentsdialog.cpp
 
 HEADERS += \
         mainwindow.h \
     badgeusemodel.h \
     presencesmodel.h \
-    studentsmodel.h
+    studentsmodel.h \
+    studentsdialog.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    studentsdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

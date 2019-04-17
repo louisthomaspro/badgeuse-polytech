@@ -21,6 +21,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tv_presences->setModel(_badgeuseModel->getPresencesModel());
     ui->tv_students->setModel(_badgeuseModel->getStudentsModel());
 
+    connect(ui->pb_addstudent, SIGNAL(clicked()), this, SLOT(openStudentsDialog()));
+    connect(ui->pb_modifystudent, SIGNAL(clicked()), this, SLOT(openStudentsDialog()));
+
 
 //    ui->statusBar->showMessage(tr("Connexion à la base de données..."));
 
@@ -75,63 +78,98 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
-void MainWindow::textFilterNameChanged()
-{
-    QRegExp regExp(ui->lineEdit_4->text());
-    nmFilter->setFilterRegExp(regExp);
-}
-
-void MainWindow::textFilterFamilyNameChanged()
-{
-    QRegExp regExp(ui->lineEdit_5->text());
-    fnFilter->setFilterRegExp(regExp);
-}
-
-
-void MainWindow::customHeaderMenuRequested(QPoint pos){
-//    QModelIndex index = ui->tv_students->indexAt(pos);
-
-    QMenu *menu=new QMenu(this);
-
-    for (int i = 0; i < static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0])); i++) {
-        QAction* fooAction = new QAction(absencesHeaderTitles[i].name.c_str(), this);
-        fooAction->setData(i);
-        fooAction->setCheckable(true);
-        fooAction->setChecked(absencesHeaderTitles[i].show);
-//        connect(fooAction, SIGNAL(triggered()), this, SLOT(toggleColumn()));
-        connect(fooAction, &QAction::triggered, [this, fooAction](){
-                toggleColumn(fooAction->data());
-            });
-        menu->addAction(fooAction);
-    }
-
-    menu->popup(ui->tv_students->horizontalHeader()->viewport()->mapToGlobal(pos));
-}
-
-void MainWindow::refresh()
-{
-    //model->select();
-}
-void MainWindow::toggleColumn(QVariant v)
-{
-    bool exec = true;
-    bool newValue = ui->tv_students->isColumnHidden(v.toInt());
-
-    int cpt_show = 0;
-    if (!newValue) { // si on cache un élement
-        for (Col& s: absencesHeaderTitles){ // on compte le nombre d'élement affiché
-            if (s.show) cpt_show++;
-        }
-        if (cpt_show < 2) exec = false; // si il reste 1 element, on ne le cache pas
-    }
-
-    if (exec) {
-        absencesHeaderTitles[v.toInt()].show = newValue;
-        ui->tv_students->setColumnHidden(v.toInt(), !newValue);
-    }
-}
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::openStudentsDialog()
+{
+
+    QString selectedUuid;
+    if (sender() == ui->pb_modifystudent) {
+        qDebug() << "modify";
+
+        QModelIndexList selectedList = ui->tv_students->selectionModel()->selectedRows();
+        if (selectedList.length() > 0) {
+            selectedUuid = ui->tv_students->model()->data(ui->tv_students->model()->index(selectedList.at(0).row(),0)).toString();
+        } else {
+            QMessageBox::information(this, "Attention", "Veuillez selectionner une ligne.");
+            return;
+        }
+
+
+
+
+    }
+
+
+    _studentsDialog = new StudentsDialog(this, selectedUuid);
+    if (_studentsDialog->exec() == QDialog::Accepted ) {
+        qDebug() << "Save";
+        QList<QString> result = _studentsDialog->getValues();
+        qDebug() << result;
+    }
+    delete _studentsDialog;
+}
+
+
+
+//void MainWindow::textFilterNameChanged()
+//{
+//    QRegExp regExp(ui->lineEdit_4->text());
+//    nmFilter->setFilterRegExp(regExp);
+//}
+
+//void MainWindow::textFilterFamilyNameChanged()
+//{
+//    QRegExp regExp(ui->lineEdit_5->text());
+//    fnFilter->setFilterRegExp(regExp);
+//}
+
+
+//void MainWindow::customHeaderMenuRequested(QPoint pos){
+////    QModelIndex index = ui->tv_students->indexAt(pos);
+
+//    QMenu *menu=new QMenu(this);
+
+//    for (int i = 0; i < static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0])); i++) {
+//        QAction* fooAction = new QAction(absencesHeaderTitles[i].name.c_str(), this);
+//        fooAction->setData(i);
+//        fooAction->setCheckable(true);
+//        fooAction->setChecked(absencesHeaderTitles[i].show);
+////        connect(fooAction, SIGNAL(triggered()), this, SLOT(toggleColumn()));
+//        connect(fooAction, &QAction::triggered, [this, fooAction](){
+//                toggleColumn(fooAction->data());
+//            });
+//        menu->addAction(fooAction);
+//    }
+
+//    menu->popup(ui->tv_students->horizontalHeader()->viewport()->mapToGlobal(pos));
+//}
+
+//void MainWindow::refresh()
+//{
+//    //model->select();
+//}
+//void MainWindow::toggleColumn(QVariant v)
+//{
+//    bool exec = true;
+//    bool newValue = ui->tv_students->isColumnHidden(v.toInt());
+
+//    int cpt_show = 0;
+//    if (!newValue) { // si on cache un élement
+//        for (Col& s: absencesHeaderTitles){ // on compte le nombre d'élement affiché
+//            if (s.show) cpt_show++;
+//        }
+//        if (cpt_show < 2) exec = false; // si il reste 1 element, on ne le cache pas
+//    }
+
+//    if (exec) {
+//        absencesHeaderTitles[v.toInt()].show = newValue;
+//        ui->tv_students->setColumnHidden(v.toInt(), !newValue);
+//    }
+//}
+
+

@@ -8,7 +8,9 @@
 #include <string>
 #include <iostream>
 #include <QSortFilterProxyModel>
+#include <QDebug>
 #include "badgeusemodel.h"
+#include "studentsdialog.h"
 
 using namespace std;
 
@@ -31,11 +33,12 @@ public:
     ~MainWindow();
 
 private slots:
-    void refresh();
-    void customHeaderMenuRequested(QPoint pos);
-    void toggleColumn(QVariant v);
-    void textFilterFamilyNameChanged();
-    void textFilterNameChanged();
+//    void refresh();
+//    void customHeaderMenuRequested(QPoint pos);
+//    void toggleColumn(QVariant v);
+//    void textFilterFamilyNameChanged();
+//    void textFilterNameChanged();
+    void openStudentsDialog();
 
 
 private:
@@ -50,6 +53,7 @@ private:
     QSortFilterProxyModel *fnFilter;
 
     BadgeuseModel *_badgeuseModel;
+    StudentsDialog *_studentsDialog;
 
 
     Col absencesHeaderTitles[6] = { {"Prénom", 1},{"Nom", 1}, {"Promotion", 1}, {"Numéro étudiant", 1}, {"Mail", 0}, {"Numéro RFID", 0}};
