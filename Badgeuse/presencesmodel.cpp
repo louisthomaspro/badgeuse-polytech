@@ -21,7 +21,7 @@ QVariant PresencesModel::data(const QModelIndex &index, int role) const
     return value;
 }
 
-void PresencesModel::init()
+void PresencesModel::initModel()
 {
     QSqlQuery query("select \
                     s.uuid,\

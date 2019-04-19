@@ -16,7 +16,7 @@ public:
 
     QVariant data(const QModelIndex &item, int role) const override;
 
-    void init();
+    void initModel();
 
 
 protected:

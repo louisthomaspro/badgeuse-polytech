@@ -95,57 +95,39 @@ void MainWindow::deleteStudent() {
         selectedUuid = ui->tv_students->model()->data(ui->tv_students->model()->index(selectedList.at(0).row(),0)).toString();
 
         QMessageBox msgBox;
-        msgBox.setText("The document has been modified.");
-        msgBox.setInformativeText("Do you want to save your changes?");
+        msgBox.setText("L'étudiant selectionné va être supprimé définitivement. Ses badgeages lié à sa carte étudiant vont être dissociés (mais pas supprimés).");
+        msgBox.setInformativeText("Êtes-vous sûr de vouloir continuer ?");
         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         int ret = msgBox.exec();
 
         if (ret == QMessageBox::Yes) {
-            // Delete in database
-            QSqlQuery queryDeleteStudent("delete from badgeuse.students where uuid = UNHEX(?)");
-            queryDeleteStudent.addBindValue(selectedUuid);
-
-            if(!queryDeleteStudent.exec()) {
-                qDebug() << "Error:" << queryDeleteStudent.lastError().text() << ", Code:" << queryDeleteStudent.lastError().number() << ", Type:" << queryDeleteStudent.lastError().type();
-                return;
-            } else {
-                qDebug() << "Student " << selectedUuid << " deleted.";
-                _badgeuseModel->getStudentsModel()->init();
-            }
-
+            _badgeuseModel->getStudentsModel()->remove(selectedUuid);
         }
 
     } else {
-        QMessageBox::information(this, "Attention", "Veuillez selectionner une ligne.");
+        QMessageBox::information(this, "Information", "Veuillez selectionner une ligne.");
         return;
     }
 
 }
 
+/* Add or modify student */
 void MainWindow::openStudentsDialog()
 {
-
     QString selectedUuid;
     if (sender() == ui->pb_modifystudent) {
-        qDebug() << "modify";
-
         QModelIndexList selectedList = ui->tv_students->selectionModel()->selectedRows();
         if (selectedList.length() > 0) {
             selectedUuid = ui->tv_students->model()->data(ui->tv_students->model()->index(selectedList.at(0).row(),0)).toString();
         } else {
-            QMessageBox::information(this, "Attention", "Veuillez selectionner une ligne.");
+            QMessageBox::information(this, "Information", "Veuillez selectionner une ligne.");
             return;
         }
-
-
     }
 
-
-    _studentsDialog = new StudentsDialog(this, selectedUuid);
+    _studentsDialog = new StudentsDialog(_badgeuseModel->getStudentsModel(), this, selectedUuid);
     if (_studentsDialog->exec() == QDialog::Accepted) {
-        qDebug() << "After closed";
-        _badgeuseModel->getStudentsModel()->init();
-        QList<QString> result = _studentsDialog->getValues();
+        _badgeuseModel->getStudentsModel()->reload();
     }
     delete _studentsDialog;
 }

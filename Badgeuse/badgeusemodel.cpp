@@ -25,8 +25,8 @@ void BadgeuseModel::initDbConnection()
 }
 void BadgeuseModel::initModels()
 {
-    _presencesModel->init();
-    _studentsModel->init();
+    _presencesModel->initModel();
+    _studentsModel->initModel();
     // init view
 }
 

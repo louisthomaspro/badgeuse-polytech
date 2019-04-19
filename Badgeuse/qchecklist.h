@@ -87,26 +87,45 @@ public:
     }
 
 
-    QStringList getCheckedItemsData()
+    void setCheckStateByText(const QString &text, const Qt::CheckState checkstate)
+    {
+        int nbRows = m_model->rowCount();
+
+        for (int i = 0; i < nbRows; i++)
+        {
+            if (m_model->item(i)->text().compare(text) == 0)
+            {
+                m_model->item(i)->setCheckState(checkstate);
+            }
+        }
+    }
+
+
+    QMap<QString, QVariant> getCheckedItems()
     {
 
-        QStringList list;
-
+        QMap<QString, QVariant> list;
         int nbRows = m_model->rowCount();
 
         if (nbRows == 0)
-        {
-            return QList<QString>();
-        }
+            return QMap<QString, QVariant>();
+
+        QStringList itemsData;
+        QStringList itemsName;
 
         for (int i = 0; i < nbRows; i++)
         {
             if (m_model->item(i)->checkState() == Qt::Checked)
             {
-                list << m_model->item(i)->data().toString();
+                QStringList item;
+                itemsData.append(m_model->item(i)->data().toString());
+                itemsName.append(m_model->item(i)->text());
             }
         }
 
+        list["itemsData"] = itemsData;
+        list["itemsName"] = itemsName;
+        qDebug() << "list: " << list;
         return list;
     }
 

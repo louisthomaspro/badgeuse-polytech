@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QListIterator>
+#include "studentsmodel.h"
 #include "qchecklist.h"
 
 
@@ -21,10 +22,8 @@ class StudentsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit StudentsDialog(QWidget *parent = nullptr, QString studentUuid = QString());
+    explicit StudentsDialog(StudentsModel *studentModel, QWidget *parent = nullptr, QString studentUuid = QString());
     ~StudentsDialog();
-
-    QList<QString> getValues();
 
 
 private slots:
@@ -37,6 +36,8 @@ private:
     Ui::StudentsDialog *ui;
     QList<QString> _values;
     QCheckList *_optionsList;
+    StudentsModel *_studentModel;
+    QString *_studentUuid;
 };
 
 #endif // STUDENTSDIALOG_H

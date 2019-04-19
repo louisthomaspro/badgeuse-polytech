@@ -5,6 +5,10 @@
 #include <QSqlQueryModel>
 #include <QTableView>
 #include <QSqlQuery>
+#include <QSqlError>
+#include <QtDebug>
+#include <QMessageBox>
+#include <QSqlRecord>
 
 class StudentsModel : public QSqlQueryModel
 {
@@ -17,7 +21,13 @@ public:
 
     QVariant data(const QModelIndex &item, int role) const override;
 
-    void init();
+    void initModel();
+    void reload();
+    void addOptions(QString uuid, QStringList options);
+    void remove(QString uuid);
+    void add(QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString training, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
+    void modify(QString uuid, QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString training, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
+    QMap<QString, QVariant> getStudent(QString uuid);
 
 
 protected:
