@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->pb_addstudent, SIGNAL(clicked()), this, SLOT(openStudentsDialog()));
     connect(ui->pb_modifystudent, SIGNAL(clicked()), this, SLOT(openStudentsDialog()));
+    connect(ui->tv_students, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(openStudentsDialog()));
     connect(ui->pb_deletestudent, SIGNAL(clicked()), this, SLOT(deleteStudent()));
 
 
@@ -115,7 +116,7 @@ void MainWindow::deleteStudent() {
 void MainWindow::openStudentsDialog()
 {
     QString selectedUuid;
-    if (sender() == ui->pb_modifystudent) {
+    if (sender() == ui->pb_modifystudent || sender() == ui->tv_students) {
         QModelIndexList selectedList = ui->tv_students->selectionModel()->selectedRows();
         if (selectedList.length() > 0) {
             selectedUuid = ui->tv_students->model()->data(ui->tv_students->model()->index(selectedList.at(0).row(),0)).toString();
