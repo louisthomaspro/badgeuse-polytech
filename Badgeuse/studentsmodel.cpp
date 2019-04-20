@@ -11,8 +11,8 @@ QVariant StudentsModel::data(const QModelIndex &index, int role) const
     if (value.isValid() && role == Qt::DisplayRole) {
         if (index.column() == 0)
             return value.toByteArray().toHex();
-//        else if (index.column() == 1)
-//            return value.toByteArray().toHex(':');
+        else if (index.column() == 1)
+            return value.toByteArray().toHex(':');
 //        else if (index.column() == 4)
 //            return value.toByteArray().toHex();
     }
@@ -25,6 +25,7 @@ void StudentsModel::initModel()
 {
     QSqlQuery query("select "
                     "stu.uuid,"
+                    "stu.rfidNumber,"
                     "stu.studentNumber as numero_etudiant,"
                     "stu.firstname as prenom,"
                     "stu.lastname as nom,"

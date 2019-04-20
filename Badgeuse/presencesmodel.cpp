@@ -12,7 +12,7 @@ QVariant PresencesModel::data(const QModelIndex &index, int role) const
         if (index.column() == 0)
             return value.toByteArray().toHex();
 //        else if (index.column() == 1)
-//            return value.toByteArray().toHex(':');
+//            return value.toByteArray().toHex();
 //        else if (index.column() == 4)
 //            return value.toByteArray().toHex();
     }
