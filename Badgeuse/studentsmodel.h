@@ -24,9 +24,10 @@ public:
     void initModel();
     void reload();
     void addOptions(QString uuid, QStringList options);
+    void updateOptions(const QString& value);
     void remove(QString uuid);
-    void add(QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString training, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
-    void modify(QString uuid, QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString training, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
+    void add(QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
+    void modify(QString uuid, QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
     QMap<QString, QVariant> getStudent(QString uuid);
 
 

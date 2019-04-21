@@ -23,7 +23,7 @@ QVariant StudentsModel::data(const QModelIndex &index, int role) const
 
 void StudentsModel::initModel()
 {
-    QSqlQuery query("select "
+    QSqlQuery querySelect("select "
                     "stu.uuid,"
                     "stu.rfidNumber,"
                     "stu.studentNumber as numero_etudiant,"
@@ -39,7 +39,7 @@ void StudentsModel::initModel()
                 "left join badgeuse.rlToptionsStudents ostu on ostu.studentsUuid = stu.uuid "
                 "left join badgeuse.toptions o on o.uuid = ostu.toptionsUuid "
                 "group by stu.uuid;");
-    setQuery(query);
+    setQuery(querySelect);
 }
 
 void StudentsModel::reload() {
@@ -68,17 +68,16 @@ void StudentsModel::remove(QString uuid)
     }
 }
 
-void StudentsModel::add(QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString training, int groupNumber, QString rfidNumber, QMap<QString, QVariant> options)
+void StudentsModel::add(QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int groupNumber, QString rfidNumber, QMap<QString, QVariant> options)
 {
-    QSqlQuery queryStudentInsert;
-    queryStudentInsert.prepare("insert into badgeuse.students VALUES("
-                               "UNHEX(REPLACE(uuid(),'-','')), ?, ?, ?, ?, ?, (SELECT t.uuid from badgeuse.training t WHERE t.name like ? LIMIT 1), ?, UNHEX(?));");
+    QSqlQuery queryStudentInsert("insert into badgeuse.students VALUES("
+                               "UNHEX(REPLACE(uuid(),'-','')), ?, ?, ?, ?, ?, UNHEX(?), ?, UNHEX(?));");
     queryStudentInsert.addBindValue(firstname);
     queryStudentInsert.addBindValue(lastname);
     queryStudentInsert.addBindValue(degreeYear);
     queryStudentInsert.addBindValue(studentNumber);
     queryStudentInsert.addBindValue(mail);
-    queryStudentInsert.addBindValue(training);
+    queryStudentInsert.addBindValue(trainingUuid);
     queryStudentInsert.addBindValue(groupNumber);
     queryStudentInsert.addBindValue(rfidNumber);
 
@@ -86,14 +85,14 @@ void StudentsModel::add(QString studentNumber, QString firstname, QString lastna
         qDebug() << "SqlError: " << queryStudentInsert.lastError().text();
         return;
     } else {
-        qDebug() << firstname << " " << lastname << " inserted.";
+//        qDebug() << firstname << " " << lastname << " inserted.";
     }
 
     QString lastUuid = QString();
     QSqlQuery queryLastUuid("SELECT @last_uuid");
     if (queryLastUuid.next()) {
         lastUuid = queryLastUuid.value(0).toByteArray().toHex();
-        qDebug() << "Last uuid: " + lastUuid;
+//        qDebug() << "Last uuid: " + lastUuid;
     } else {
         qDebug() << "No last uuid found...";
         return;
@@ -103,8 +102,7 @@ void StudentsModel::add(QString studentNumber, QString firstname, QString lastna
 
 
     // Associate scans with the student
-    QSqlQuery queryStudentUpdateScans;
-    queryStudentUpdateScans.prepare("update badgeuse.scans set studentUuid = UNHEX(?) where rfidNumber = UNHEX(?)");
+    QSqlQuery queryStudentUpdateScans("update badgeuse.scans set studentUuid = UNHEX(?) where rfidNumber = UNHEX(?)");
     queryStudentUpdateScans.addBindValue(lastUuid);
     queryStudentUpdateScans.addBindValue(rfidNumber);
 
@@ -112,7 +110,7 @@ void StudentsModel::add(QString studentNumber, QString firstname, QString lastna
         qDebug() << "SqlError: " << queryStudentUpdateScans.lastError().text();
         return;
     } else {
-        qDebug() << "Scans updated.";
+//        qDebug() << "Scans updated.";
     }
 
 
@@ -122,8 +120,7 @@ void StudentsModel::add(QString studentNumber, QString firstname, QString lastna
 
 
 void StudentsModel::addOptions(QString uuid, QStringList options) {
-    QSqlQuery queryStudentInsertOptions;
-    queryStudentInsertOptions.prepare("insert into badgeuse.rlToptionsStudents VALUES(UNHEX(?), UNHEX(?))");
+    QSqlQuery queryStudentInsertOptions("insert into badgeuse.rlToptionsStudents VALUES(UNHEX(?), UNHEX(?))");
 
     QStringList uuids;
     QStringList optionsUuids;
@@ -138,20 +135,19 @@ void StudentsModel::addOptions(QString uuid, QStringList options) {
         qDebug() << "Error:" << queryStudentInsertOptions.lastError().text();
         return;
     } else {
-        qDebug() << options << " option inserted.";
+//        qDebug() << options << " option inserted.";
     }
 }
 
-void StudentsModel::modify(QString uuid, QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString training, int groupNumber, QString rfidNumber, QMap<QString, QVariant> options)
+void StudentsModel::modify(QString uuid, QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int groupNumber, QString rfidNumber, QMap<QString, QVariant> options)
 {
-    QSqlQuery queryStudentModify;
-    queryStudentModify.prepare("update badgeuse.students set "
+    QSqlQuery queryStudentModify("update badgeuse.students set "
                                "firstname = ?,"
                                "lastname = ?,"
                                "degreeYear = ?,"
                                "studentNumber = ?,"
                                "mail = ?,"
-                               "trainingUuid = (SELECT t.uuid from badgeuse.training t WHERE t.name like ? LIMIT 1),"
+                               "trainingUuid = UNHEX(?),"
                                "groupNumber = ?,"
                                "rfidNumber = UNHEX(?) "
                                "where uuid = UNHEX(?);");
@@ -160,7 +156,7 @@ void StudentsModel::modify(QString uuid, QString studentNumber, QString firstnam
     queryStudentModify.addBindValue(degreeYear);
     queryStudentModify.addBindValue(studentNumber);
     queryStudentModify.addBindValue(mail);
-    queryStudentModify.addBindValue(training);
+    queryStudentModify.addBindValue(trainingUuid);
     queryStudentModify.addBindValue(groupNumber);
     queryStudentModify.addBindValue(rfidNumber);
     queryStudentModify.addBindValue(uuid);
@@ -170,11 +166,10 @@ void StudentsModel::modify(QString uuid, QString studentNumber, QString firstnam
         qDebug() << "SqlError: " << queryStudentModify.lastError().text();
         return;
     } else {
-        qDebug() << "Student updated.";
+//        qDebug() << "Student updated.";
     }
 
-    QSqlQuery queryStudentDeleteOptions;
-    queryStudentDeleteOptions.prepare("delete from badgeuse.rlToptionsStudents "
+    QSqlQuery queryStudentDeleteOptions("delete from badgeuse.rlToptionsStudents "
                                "where studentsUuid = UNHEX(?);");
     queryStudentDeleteOptions.addBindValue(uuid);
 
@@ -182,7 +177,7 @@ void StudentsModel::modify(QString uuid, QString studentNumber, QString firstnam
         qDebug() << "SqlError: " << queryStudentDeleteOptions.lastError().text();
         return;
     } else {
-        qDebug() << "Options removed.";
+//        qDebug() << "Options removed.";
     }
 
     addOptions(uuid, options["itemsData"].toStringList());
@@ -196,8 +191,7 @@ void StudentsModel::modify(QString uuid, QString studentNumber, QString firstnam
 
 QMap<QString, QVariant> StudentsModel::getStudent(QString uuid)
 {
-    QSqlQuery queryStudent;
-    queryStudent.prepare("select stu.studentNumber, stu.firstname, stu.lastname, stu.mail, stu.degreeYear, t.name as trainingName, t.uuid as trainingUuid, stu.groupNumber, stu.rfidNumber from badgeuse.students stu "
+    QSqlQuery queryStudent("select stu.uuid, stu.studentNumber, stu.firstname, stu.lastname, stu.mail, stu.degreeYear, t.name as trainingName, t.uuid as trainingUuid, stu.groupNumber, stu.rfidNumber from badgeuse.students stu "
                   "left join badgeuse.training t on stu.trainingUuid = t.uuid "
                   "left join badgeuse.rlToptionsStudents ostu on ostu.studentsUuid = stu.uuid "
                   "left join badgeuse.toptions o on o.uuid = ostu.toptionsUuid "
@@ -229,8 +223,7 @@ QMap<QString, QVariant> StudentsModel::getStudent(QString uuid)
     }
 
 
-    QSqlQuery queryStudentOptions;
-    queryStudentOptions.prepare("select o.uuid, o.name "
+    QSqlQuery queryStudentOptions("select o.uuid, o.name "
                                 "from badgeuse.toptions o "
                                 "inner join badgeuse.rlToptionsStudents rl on o.uuid = rl.toptionsUuid "
                                 "where rl.studentsUuid = UNHEX(?);");
@@ -256,7 +249,7 @@ QMap<QString, QVariant> StudentsModel::getStudent(QString uuid)
     }
     studentInfo["options"] = options;
 
-    qDebug() << "getStudent: " << studentInfo;
+    qDebug() << "getStudent: " << studentInfo["uuid"].toByteArray().toHex();
 
     return studentInfo;
 }

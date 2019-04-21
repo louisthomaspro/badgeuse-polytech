@@ -89,7 +89,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::deleteStudent() {
     QString selectedUuid;
-    qDebug() << "Click delete";
 
     QModelIndexList selectedList = ui->tv_students->selectionModel()->selectedRows();
     if (selectedList.length() > 0) {

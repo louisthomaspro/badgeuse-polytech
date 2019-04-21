@@ -125,7 +125,7 @@ public:
 
         list["itemsData"] = itemsData;
         list["itemsName"] = itemsName;
-        qDebug() << "list: " << list;
+//        qDebug() << "list: " << list;
         return list;
     }
 

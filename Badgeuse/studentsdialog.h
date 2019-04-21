@@ -29,7 +29,7 @@ public:
 private slots:
     virtual void accept();
     bool validateValues();
-    void updateOptions(const QString& value);
+    void updateOptions(const int& index);
 
 
 private:

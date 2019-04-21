@@ -17,16 +17,15 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
 
 
     // Connect
-    connect(ui->cb_trainingName, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(updateOptions(const QString&)));
+    connect(ui->cb_trainingName, SIGNAL(currentIndexChanged(const int&)), this, SLOT(updateOptions(const int&)));
     connect(this, SIGNAL(accepted()), this, SLOT(validateValues()));
 
 
 
     // Init training combobox
-    QSqlQuery queryTraining("select t.name, t.uuid from badgeuse.training t;");
+    QSqlQuery queryTraining("select t.uuid, t.name from badgeuse.training t;");
     while (queryTraining.next()) {
-        QString training = queryTraining.value(0).toString();
-        ui->cb_trainingName->addItem(training);
+        ui->cb_trainingName->addItem(queryTraining.value(1).toString(), queryTraining.value(0).toByteArray().toHex());
     }
 
     // Set default degreeYear
@@ -53,7 +52,7 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
     } else { // uuid found
 
 
-        qDebug() << "Loading uuid " + *_studentUuid;
+//        qDebug() << "Loading uuid " + *_studentUuid;
 
         QMap<QString, QVariant> studentInfo = _studentModel->getStudent(*_studentUuid);
 
@@ -83,20 +82,19 @@ StudentsDialog::~StudentsDialog()
 }
 
 
-void StudentsDialog::updateOptions(const QString& value) {
-    qDebug() << "Loading " + value;
+void StudentsDialog::updateOptions(const int& index) {
+//    qDebug() << "Loading " + value;
 
     // INIT TRAINING
-    QSqlQuery query;
-    query.prepare("select o.uuid, o.name from badgeuse.toptions o "
+    QSqlQuery queryUpdateOptions("select o.uuid, o.name from badgeuse.toptions o "
                   "inner join badgeuse.training t on o.trainingUuid = t.uuid "
-                  "where t.name like ?;");
-    query.addBindValue(value);
-    query.exec();
+                  "where t.uuid = UNHEX(?);");
+    queryUpdateOptions.addBindValue(ui->cb_trainingName->itemData(index).toString());
+    queryUpdateOptions.exec();
 
     _optionsList->clear();
-    while (query.next()) {
-        _optionsList->addCheckItem(query.value(1).toString(), query.value(0).toByteArray().toHex(), Qt::CheckState::Unchecked);
+    while (queryUpdateOptions.next()) {
+        _optionsList->addCheckItem(queryUpdateOptions.value(1).toString(), queryUpdateOptions.value(0).toByteArray().toHex(), Qt::CheckState::Unchecked);
     }
 
 }
@@ -114,7 +112,7 @@ void StudentsDialog::accept()
                         ui->le_lastname->text(),
                         ui->le_mail->text(),
                         ui->sb_degreeYear->value(),
-                        ui->cb_trainingName->currentText(),
+                        ui->cb_trainingName->currentData().toString(),
                         ui->sb_group->value(),
                         ui->le_rfidNumber->text(),
                         _optionsList->getCheckedItems());
@@ -126,7 +124,7 @@ void StudentsDialog::accept()
                         ui->le_lastname->text(),
                         ui->le_mail->text(),
                         ui->sb_degreeYear->value(),
-                        ui->cb_trainingName->currentText(),
+                        ui->cb_trainingName->currentData().toString(),
                         ui->sb_group->value(),
                         ui->le_rfidNumber->text(),
                         _optionsList->getCheckedItems());
@@ -167,7 +165,7 @@ bool StudentsDialog::validateValues() {
     }
 
 
-    // CHECK RFID IF ITS GOOD
+    // CHECK RFID IF ITS GOOD and not empty
 
 
 
