@@ -43,7 +43,8 @@ HEADERS += \
 
 FORMS += \
         mainwindow.ui \
-    studentsdialog.ui
+    studentsdialog.ui \
+    presencesdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
