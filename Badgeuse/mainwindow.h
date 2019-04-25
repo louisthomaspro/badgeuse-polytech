@@ -11,6 +11,7 @@
 #include <QDebug>
 #include "badgeusemodel.h"
 #include "studentsdialog.h"
+#include "presencesdialog.h"
 
 using namespace std;
 
@@ -40,6 +41,8 @@ private slots:
 //    void textFilterNameChanged();
     void openStudentsDialog();
     void deleteStudent();
+    void openPresencesDialog();
+    void deletePresence();
 
 
 private:
@@ -55,6 +58,7 @@ private:
 
     BadgeuseModel *_badgeuseModel;
     StudentsDialog *_studentsDialog;
+    PresencesDialog *_presencesDialog;
 
 
     Col absencesHeaderTitles[6] = { {"Prénom", 1},{"Nom", 1}, {"Promotion", 1}, {"Numéro étudiant", 1}, {"Mail", 0}, {"Numéro RFID", 0}};

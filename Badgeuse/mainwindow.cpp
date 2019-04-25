@@ -27,6 +27,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pb_deletestudent, SIGNAL(clicked()), this, SLOT(deleteStudent()));
 
 
+    connect(ui->pb_addpresence, SIGNAL(clicked()), this, SLOT(openPresencesDialog()));
+    connect(ui->pb_modifypresence, SIGNAL(clicked()), this, SLOT(openPresencesDialog()));
+    connect(ui->tv_presences, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(openPresencesDialog()));
+    connect(ui->pb_deletepresence, SIGNAL(clicked()), this, SLOT(deletePresence()));
+
+
 //    ui->statusBar->showMessage(tr("Connexion à la base de données..."));
 
 
@@ -131,6 +137,56 @@ void MainWindow::openStudentsDialog()
     }
     delete _studentsDialog;
 }
+
+
+
+
+
+void MainWindow::deletePresence() {
+    QString selectedUuid;
+
+    QModelIndexList selectedList = ui->tv_presences->selectionModel()->selectedRows();
+    if (selectedList.length() > 0) {
+        selectedUuid = ui->tv_presences->model()->data(ui->tv_presences->model()->index(selectedList.at(0).row(),0)).toString();
+
+        QMessageBox msgBox;
+        msgBox.setText("La présence selectionnée va être supprimée définitivement.");
+        msgBox.setInformativeText("Êtes-vous sûr de vouloir continuer ?");
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        int ret = msgBox.exec();
+
+        if (ret == QMessageBox::Yes) {
+            _badgeuseModel->getPresencesModel()->remove(selectedUuid);
+        }
+
+    } else {
+        QMessageBox::information(this, "Information", "Veuillez selectionner une ligne.");
+        return;
+    }
+
+}
+
+/* Add or modify presence */
+void MainWindow::openPresencesDialog()
+{
+    QString selectedUuid;
+    if (sender() == ui->pb_modifypresence || sender() == ui->tv_presences) {
+        QModelIndexList selectedList = ui->tv_presences->selectionModel()->selectedRows();
+        if (selectedList.length() > 0) {
+            selectedUuid = ui->tv_presences->model()->data(ui->tv_presences->model()->index(selectedList.at(0).row(),0)).toString();
+        } else {
+            QMessageBox::information(this, "Information", "Veuillez selectionner une ligne.");
+            return;
+        }
+    }
+
+    _presencesDialog = new PresencesDialog(_badgeuseModel->getPresencesModel(), this, selectedUuid);
+    if (_presencesDialog->exec() == QDialog::Accepted) {
+        _badgeuseModel->getPresencesModel()->reload();
+    }
+    delete _presencesDialog;
+}
+
 
 
 

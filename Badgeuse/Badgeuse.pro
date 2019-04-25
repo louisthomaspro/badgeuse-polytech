@@ -29,6 +29,7 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     badgeusemodel.cpp \
+    presencesdialog.cpp \
     presencesmodel.cpp \
     studentsmodel.cpp \
     studentsdialog.cpp
@@ -36,6 +37,7 @@ SOURCES += \
 HEADERS += \
         mainwindow.h \
     badgeusemodel.h \
+    presencesdialog.h \
     presencesmodel.h \
     studentsmodel.h \
     studentsdialog.h \

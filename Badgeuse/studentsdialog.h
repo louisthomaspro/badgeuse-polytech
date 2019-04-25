@@ -11,6 +11,7 @@
 #include <QListIterator>
 #include "studentsmodel.h"
 #include "qchecklist.h"
+#include "ui_studentsdialog.h"
 
 
 namespace Ui {

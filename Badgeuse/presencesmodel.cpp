@@ -23,12 +23,10 @@ QVariant PresencesModel::data(const QModelIndex &index, int role) const
 
 void PresencesModel::initModel()
 {
-    QSqlQuery query("select "
-                    "s.uuid, "
-                    "s.rfidNumber, "
-                    "s.dateTimeEntry, "
-                    "s.dateTimeExit, "
-                    "cr.information, "
+    QSqlQuery query("with studentsInformation as ("
+                    "select "
+                    "stu.uuid, "
+                    "stu.rfidNumber, "
                     "stu.studentNumber as numero_etudiant, "
                     "stu.firstname as prenom, "
                     "stu.lastname as nom, "
@@ -37,13 +35,17 @@ void PresencesModel::initModel()
                     "t.name as formation, "
                     "stu.groupNumber as groupe, "
                     "GROUP_CONCAT(DISTINCT o.name SEPARATOR ', ') as options "
-                    "from badgeuse.scans s "
-                    "left join badgeuse.students stu on stu.rfidNumber = s.rfidNumber "
+                    "from badgeuse.students stu "
                     "left join badgeuse.training t on stu.trainingUuid = t.uuid "
                     "left join badgeuse.rlToptionsStudents ostu on ostu.studentsUuid = stu.uuid "
                     "left join badgeuse.toptions o on o.uuid = ostu.toptionsUuid "
-                    "inner join badgeuse.cardreaders cr on cr.uuid = s.cardReaderUuid "
-                    "group by stu.uuid;");
+                    "group by stu.uuid "
+                ")"
+                "select s.uuid, s.rfidNumber, s.dateTimeEntry, s.dateTimeExit, cr.information, stu.numero_etudiant, stu.prenom, stu.nom, stu.promotion, stu.groupe, stu.options "
+                "from badgeuse.scans s "
+                "left join studentsInformation stu on stu.uuid = s.studentUuid "
+                "left join badgeuse.cardreaders cr on cr.uuid = s.cardReaderUuid; "
+                );
     setQuery(query);
 }
 

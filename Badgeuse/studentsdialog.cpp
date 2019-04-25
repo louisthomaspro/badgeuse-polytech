@@ -1,5 +1,4 @@
 #include "studentsdialog.h"
-#include "ui_studentsdialog.h"
 
 StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QString studentUuid) :
     QDialog(parent),
