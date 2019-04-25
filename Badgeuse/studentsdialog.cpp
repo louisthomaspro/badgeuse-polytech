@@ -14,6 +14,7 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
     _optionsList = new QCheckList(this);
     ui->formLayout->replaceWidget(ui->l_optionsList, _optionsList);
     _optionsList->setTabOrder(ui->sb_group, _optionsList);
+    delete ui->l_optionsList;
 
 
     // Connect
@@ -32,24 +33,31 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
     ui->sb_degreeYear->setValue(QDate::currentDate().year()+3);
 
 
-    if (_studentUuid->isEmpty()) {
+    // Set last alone rfidNumber
+    QSqlQuery queryRfid("SELECT "
+                        "s.rfidNumber, s.dateTimeEntry, s.DateTimeExit "
+                        "FROM badgeuse.scans s "
+                        "WHERE s.studentUuid IS NULL "
+                        "order by s.dateTimeEntry desc, s.DateTimeExit desc;");
 
-        // Set last alone rfidNumber
-        QSqlQuery queryRfid("SELECT "
-                            "DISTINCT s.rfidNumber "
-                            "FROM badgeuse.scans s "
-                            "WHERE s.studentUuid IS NULL "
-                            "order by s.DateTimeExit desc, s.dateTimeEntry desc limit 1;");
+    if (queryRfid.size() == 0) {
+        QMessageBox::critical(this, "Attention",
+        "Aucun rfid libre disponible pour créer un nouvel étudiant.",
+        QMessageBox::Ok);
+        close();
+        // non testé
+    }
+    while (queryRfid.next()) {
+        ui->cb_rfidNumber->addItem(
+                    queryRfid.value(0).toByteArray().toHex() + " (Entrée: " + queryRfid.value(1).toDateTime().toString(Qt::LocalDate) + (queryRfid.value(2).isNull() ? "" : (" - Sortie: " + queryRfid.value(2).toDateTime().toString(Qt::LocalDate))) + ")",
+                    queryRfid.value(0).toByteArray().toHex()
+                    );
+    }
 
-        if (queryRfid.first()) {
-            ui->le_rfidNumber->setText(queryRfid.value(0).toByteArray().toHex().toUpper());
-        } else {
-            ui->le_rfidNumber->setText("No rfid found");
-        }
 
+    if (!_studentUuid->isEmpty()) {
 
-
-    } else { // uuid found
+        ui->l_title->setText("Modification d'un étudiant");
 
 
 //        qDebug() << "Loading uuid " + *_studentUuid;
@@ -61,15 +69,24 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
         ui->le_lastname->setText(studentInfo["lastname"].toString());
         ui->le_mail->setText(studentInfo["mail"].toString());
         ui->sb_degreeYear->setValue(studentInfo["degreeYear"].toInt());
-        ui->cb_trainingName->setCurrentIndex(ui->cb_trainingName->findText(studentInfo["trainingName"].toString()));
+        // Find text direct ?
+        ui->cb_trainingName->setCurrentText(studentInfo["trainingName"].toString());
         ui->sb_group->setValue(studentInfo["group"].toInt());
-        ui->le_rfidNumber->setText(studentInfo["rfidNumber"].toByteArray().toHex().toUpper());
+
+        ui->cb_rfidNumber->insertItem(
+                    0,
+                    studentInfo["rfidNumber"].toByteArray().toHex() + " (rfid actuel)",
+                    studentInfo["rfidNumber"].toByteArray().toHex()
+                    );
+        ui->cb_rfidNumber->setCurrentIndex(0);
 
         // Check options
         for(QString s: (studentInfo["options"].toMap()["optionsName"]).toStringList()) {
             _optionsList->setCheckStateByText(s, Qt::CheckState::Checked);
         }
 
+    } else {
+        ui->l_title->setText("Ajout d'un étudiant");
     }
 
 
@@ -114,7 +131,7 @@ void StudentsDialog::accept()
                         ui->sb_degreeYear->value(),
                         ui->cb_trainingName->currentData().toString(),
                         ui->sb_group->value(),
-                        ui->le_rfidNumber->text(),
+                        ui->cb_rfidNumber->currentData().toString(),
                         _optionsList->getCheckedItems());
         } else {
             _studentModel->modify(
@@ -126,7 +143,7 @@ void StudentsDialog::accept()
                         ui->sb_degreeYear->value(),
                         ui->cb_trainingName->currentData().toString(),
                         ui->sb_group->value(),
-                        ui->le_rfidNumber->text(),
+                        ui->cb_rfidNumber->currentData().toString(),
                         _optionsList->getCheckedItems());
         }
 
