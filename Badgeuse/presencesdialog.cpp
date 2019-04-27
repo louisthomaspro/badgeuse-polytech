@@ -43,18 +43,12 @@ PresencesDialog::PresencesDialog(PresencesModel *presenceModel, QWidget *parent,
 
         QMap<QString, QVariant> presenceInfo = _presenceModel->getPresence(*_presenceUuid);
 
-        ui->dt_entry->setDateTime(presenceInfo["presenceEntry"].toDateTime());
-        ui->dt_exit->setDateTime(presenceInfo["firstname"].toDateTime());
+        ui->cb_cardReader->setCurrentIndex(ui->cb_cardReader->findData(presenceInfo["cardreaderUuid"].toByteArray().toHex()));
+        ui->cb_student->setCurrentIndex(ui->cb_student->findData(presenceInfo["studentUuid"].toByteArray().toHex()));
 
-        int indexCardreader = ui->cb_cardReader->findData(presenceInfo["cardreaderUuid"]);
-        if ( indexCardreader != -1 ) { // -1 for not found
-           ui->cb_cardReader->setCurrentIndex(indexCardreader);
-        }
+        ui->dt_entry->setDateTime(QDateTime::fromTime_t(presenceInfo["dateTimeEntry"].toUInt()));
+        ui->dt_exit->setDateTime(QDateTime::fromTime_t(presenceInfo["dateTimeExit"].toUInt()));
 
-        int indexStudent = ui->cb_student->findData(presenceInfo["studentUuid"]);
-        if ( indexStudent != -1 ) { // -1 for not found
-           ui->cb_student->setCurrentIndex(indexStudent);
-        }
 
     } else {
         ui->l_title->setText("Ajout d'une présence");
@@ -76,30 +70,22 @@ void PresencesDialog::accept()
 
     if (validateValues()) {
 
-//        if (_presenceUuid->isEmpty()) {
-//            _presenceModel->add(
-//                        ui->le_studentNumber->text(),
-//                        ui->le_firstname->text(),
-//                        ui->le_lastname->text(),
-//                        ui->le_mail->text(),
-//                        ui->sb_degreeYear->value(),
-//                        ui->cb_trainingName->currentData().toString(),
-//                        ui->sb_group->value(),
-//                        ui->cb_rfidNumber->currentData().toString(),
-//                        _optionsList->getCheckedItems());
-//        } else {
-//            _presenceModel->modify(
-//                        *_presenceUuid,
-//                        ui->le_studentNumber->text(),
-//                        ui->le_firstname->text(),
-//                        ui->le_lastname->text(),
-//                        ui->le_mail->text(),
-//                        ui->sb_degreeYear->value(),
-//                        ui->cb_trainingName->currentData().toString(),
-//                        ui->sb_group->value(),
-//                        ui->cb_rfidNumber->currentData().toString(),
-//                        _optionsList->getCheckedItems());
-//        }
+        if (_presenceUuid->isEmpty()) {
+            _presenceModel->add(
+                        ui->dt_entry->dateTime().toTime_t(),
+                        ui->dt_exit->dateTime().toTime_t(),
+                        ui->cb_cardReader->currentData().toString(),
+                        ui->cb_student->currentData().toString()
+                        );
+        } else {
+            _presenceModel->modify(
+                        *_presenceUuid,
+                        ui->dt_entry->dateTime().toTime_t(),
+                        ui->dt_exit->dateTime().toTime_t(),
+                        ui->cb_cardReader->currentData().toString(),
+                        ui->cb_student->currentData().toString()
+                        );
+        }
 
         QDialog::accept();
     }

@@ -29,6 +29,7 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     badgeusemodel.cpp \
+    others.cpp \
     presencesdialog.cpp \
     presencesmodel.cpp \
     studentsmodel.cpp \

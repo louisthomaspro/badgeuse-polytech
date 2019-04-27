@@ -24,8 +24,8 @@ public:
     void initModel();
     void reload();
     void remove(QString uuid);
-    void add(QString rfidNumber, QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid);
-    void modify(QString uuid, QString rfidNumber, QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid);
+    void add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid);
+    void modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid);
     QMap<QString, QVariant> getPresence(QString uuid);
 
 

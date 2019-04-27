@@ -72,10 +72,10 @@ void PresencesModel::remove(QString uuid) {
 }
 
 
-void PresencesModel::add(QString rfidNumber, QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid) {
+void PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid) {
     QSqlQuery queryPresenceInsert("insert into badgeuse.scans VALUES("
-                               "UNHEX(REPLACE(uuid(),'-','')), ?, ?, ?, ?, ?);");
-    queryPresenceInsert.addBindValue(rfidNumber);
+                               "UNHEX(REPLACE(uuid(),'-','')), (select rfidNumber from students where uuid = UNHEX(?)), FROM_UNIXTIME(?), FROM_UNIXTIME(?), UNHEX(?), UNHEX(?));");
+    queryPresenceInsert.addBindValue(studentUuid);
     queryPresenceInsert.addBindValue(DateTimeEntry);
     queryPresenceInsert.addBindValue(DateTimeExit);
     queryPresenceInsert.addBindValue(cardReaderUuid);
@@ -92,15 +92,15 @@ void PresencesModel::add(QString rfidNumber, QDateTime DateTimeEntry, QDateTime 
 }
 
 
-void PresencesModel::modify(QString uuid, QString rfidNumber, QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid) {
+void PresencesModel::modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid) {
     QSqlQuery queryStudentModify("update badgeuse.scans set "
-                               "rfidNumber = ?,"
-                               "dateTimeEntry = ?,"
-                               "dateTimeExit = ?,"
-                               "cardReaderUuid = ?,"
-                               "studentUuid = ? "
+                               "rfidNumber = (select rfidNumber from students where uuid = UNHEX(?)),"
+                               "dateTimeEntry = FROM_UNIXTIME(?),"
+                               "dateTimeExit = FROM_UNIXTIME(?),"
+                               "cardReaderUuid = UNHEX(?),"
+                               "studentUuid = UNHEX(?) "
                                "where uuid = UNHEX(?);");
-    queryStudentModify.addBindValue(rfidNumber);
+    queryStudentModify.addBindValue(studentUuid);
     queryStudentModify.addBindValue(DateTimeEntry);
     queryStudentModify.addBindValue(DateTimeExit);
     queryStudentModify.addBindValue(cardReaderUuid);
@@ -119,41 +119,32 @@ void PresencesModel::modify(QString uuid, QString rfidNumber, QDateTime DateTime
 }
 
 
+
+
 QMap<QString, QVariant> PresencesModel::getPresence(QString uuid) {
     QSqlQuery queryPresence("select "
                     "s.uuid, "
                     "s.rfidNumber, "
-                    "s.dateTimeEntry, "
-                    "s.dateTimeExit, "
-                    "stu.studentNumber as numero_etudiant, "
-                    "stu.firstname as prenom, "
-                    "stu.lastname as nom, "
-                    "stu.degreeYear as promotion, "
-                    "stu.mail, "
-                    "t.name as formation, "
-                    "stu.groupNumber as groupe, "
-                    "GROUP_CONCAT(DISTINCT o.name SEPARATOR ', ') as options "
+                    "UNIX_TIMESTAMP(s.dateTimeEntry) as dateTimeEntry, "
+                    "UNIX_TIMESTAMP(s.dateTimeExit) as dateTimeExit, "
+                    "s.studentUuid, "
+                    "s.cardreaderUuid "
                     "from badgeuse.scans s "
-                    "left join badgeuse.students stu on stu.rfidNumber = s.rfidNumber "
-                    "left join badgeuse.training t on stu.trainingUuid = t.uuid "
-                    "left join badgeuse.rlToptionsStudents ostu on ostu.studentsUuid = stu.uuid "
-                    "left join badgeuse.toptions o on o.uuid = ostu.toptionsUuid "
-                    "group by stu.uuid;"
-                  "where stu.uuid = UNHEX(?);");
+                    "left join badgeuse.cardreaders cr on cr.uuid = s.cardreaderUuid "
+                  "where s.uuid = UNHEX(?);");
 
     queryPresence.addBindValue(uuid);
     queryPresence.exec();
 
     QMap<QString, QVariant> presenceInfo;
 
-    // a definir
 
     if (queryPresence.next()) {
         for (int col = 0; col < queryPresence.record().count(); col++) { // foreach colmns
             presenceInfo[queryPresence.record().fieldName(col)] = queryPresence.value(col);
         }
     } else {
-        qDebug() << "Error queryPrecence of uuid " << uuid << ".";
+        qDebug() << "Error queryPresence of uuid " << uuid << ".";
         return  QMap<QString, QVariant>();
     }
 
