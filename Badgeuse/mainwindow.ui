@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -154,28 +154,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QComboBox" name="comboBox_3">
-                      <item>
-                       <property name="text">
-                        <string>Tout</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>DII3</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>DII4</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>DII5</string>
-                       </property>
-                      </item>
-                     </widget>
+                     <widget class="QComboBox" name="comboBox_3"/>
                     </item>
                    </layout>
                   </widget>
@@ -191,23 +170,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QComboBox" name="comboBox">
-                      <item>
-                       <property name="text">
-                        <string>Tout</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>A</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>B</string>
-                       </property>
-                      </item>
-                     </widget>
+                     <widget class="QComboBox" name="comboBox"/>
                     </item>
                    </layout>
                   </widget>
@@ -223,23 +186,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QComboBox" name="comboBox_2">
-                      <item>
-                       <property name="text">
-                        <string>Tout</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Option 1</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Option 2</string>
-                       </property>
-                      </item>
-                     </widget>
+                     <widget class="QComboBox" name="comboBox_2"/>
                     </item>
                    </layout>
                   </widget>
@@ -412,28 +359,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QComboBox" name="comboBox_7">
-                      <item>
-                       <property name="text">
-                        <string>Tout</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>DII3</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>DII4</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>DII5</string>
-                       </property>
-                      </item>
-                     </widget>
+                     <widget class="QComboBox" name="comboBox_7"/>
                     </item>
                    </layout>
                   </widget>
@@ -449,23 +375,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QComboBox" name="comboBox_5">
-                      <item>
-                       <property name="text">
-                        <string>Tout</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>A</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>B</string>
-                       </property>
-                      </item>
-                     </widget>
+                     <widget class="QComboBox" name="comboBox_5"/>
                     </item>
                    </layout>
                   </widget>
@@ -481,23 +391,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QComboBox" name="comboBox_6">
-                      <item>
-                       <property name="text">
-                        <string>Tout</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Option 1</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Option 2</string>
-                       </property>
-                      </item>
-                     </widget>
+                     <widget class="QComboBox" name="comboBox_6"/>
                     </item>
                    </layout>
                   </widget>
@@ -611,30 +505,42 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_26">
             <item>
-             <layout class="QGridLayout" name="gridLayout_4">
-              <item row="0" column="0">
-               <widget class="QPushButton" name="pushButton_7">
-                <property name="text">
-                 <string>Ajouter</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QPushButton" name="pushButton_8">
-                <property name="text">
-                 <string>Supprimer</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <layout class="QGridLayout" name="gridLayout_4"/>
             </item>
             <item>
              <layout class="QGridLayout" name="gridLayout_5">
-              <item row="1" column="2">
-               <widget class="QListView" name="listView_3"/>
+              <item row="0" column="1">
+               <widget class="QLabel" name="label_17">
+                <property name="text">
+                 <string>Options</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QTableView" name="tv_promotions">
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QListView" name="listView_2"/>
+               <widget class="QTableView" name="tv_options">
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
               <item row="0" column="0">
                <widget class="QLabel" name="label_15">
@@ -643,22 +549,41 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
-               <widget class="QLabel" name="label_16">
-                <property name="text">
-                 <string>Groupes</string>
-                </property>
-               </widget>
+              <item row="2" column="0">
+               <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <item>
+                 <widget class="QPushButton" name="pb_addPromotion">
+                  <property name="text">
+                   <string>Ajouter</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pb_deletePromotion">
+                  <property name="text">
+                   <string>Supprimer</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
-              <item row="0" column="2">
-               <widget class="QLabel" name="label_17">
-                <property name="text">
-                 <string>Options</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QListView" name="listView"/>
+              <item row="2" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <item>
+                 <widget class="QPushButton" name="pb_addOption">
+                  <property name="text">
+                   <string>Ajouter</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pb_deleteOption">
+                  <property name="text">
+                   <string>Supprimer</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </item>

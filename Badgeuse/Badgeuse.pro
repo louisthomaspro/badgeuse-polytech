@@ -29,20 +29,24 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     badgeusemodel.cpp \
+    optionsmodel.cpp \
     others.cpp \
     presencesdialog.cpp \
     presencesmodel.cpp \
     studentsmodel.cpp \
-    studentsdialog.cpp
+    studentsdialog.cpp \
+    trainingmodel.cpp
 
 HEADERS += \
         mainwindow.h \
     badgeusemodel.h \
+    optionsmodel.h \
     presencesdialog.h \
     presencesmodel.h \
     studentsmodel.h \
     studentsdialog.h \
-    qchecklist.h
+    qchecklist.h \
+    trainingmodel.h
 
 FORMS += \
         mainwindow.ui \
