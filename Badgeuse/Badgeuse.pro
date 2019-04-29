@@ -34,10 +34,12 @@ SOURCES += \
     presencesdialog.cpp \
     presencesfilterproxymodel.cpp \
     presencesmodel.cpp \
+    studentsfilterproxymodel.cpp \
     studentsmodel.cpp \
     studentsdialog.cpp \
     trainingdialog.cpp \
-    trainingmodel.cpp
+    trainingmodel.cpp \
+    utilities.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -47,11 +49,13 @@ HEADERS += \
     presencesdialog.h \
     presencesfilterproxymodel.h \
     presencesmodel.h \
+    studentsfilterproxymodel.h \
     studentsmodel.h \
     studentsdialog.h \
     qchecklist.h \
     trainingdialog.h \
-    trainingmodel.h
+    trainingmodel.h \
+    utilities.h
 
 FORMS += \
         mainwindow.ui \

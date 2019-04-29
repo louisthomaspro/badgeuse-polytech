@@ -15,7 +15,9 @@
 #include "trainingdialog.h"
 #include "optionsdialog.h"
 #include "presencesfilterproxymodel.h"
+#include "studentsfilterproxymodel.h"
 #include <QSettings>
+#include <utilities.h>
 
 using namespace std;
 
@@ -33,10 +35,6 @@ public:
     ~MainWindow();
 
 
-public:
-    QString getTvSelectedUuid(QTableView *tv);
-
-
 private slots:
 
     void dbSaveAndConnect();
@@ -49,6 +47,9 @@ private slots:
     void deleteTraining();
 
     void reload();
+
+    void updatePfOptions();
+    void updateSfOptions();
 
 
 
@@ -63,11 +64,16 @@ private:
     OptionsDialog *_optionsDialog;
 
     PresencesFilterProxyModel *_presencesFilterProxyModel;
-//    StudentsFilterProxyModel *_studentsFilterProxyModel;
+    StudentsFilterProxyModel *_studentsFilterProxyModel;
 
 
     QSettings *_dbSettings;
 
+
+
+private:
+    QString getTvSelectedUuid(QTableView *tv);
+    void initFilters();
 
 
 

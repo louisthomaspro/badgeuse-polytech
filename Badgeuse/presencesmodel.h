@@ -18,8 +18,18 @@ class PresencesModel : public QSqlQueryModel
 public:
     enum ColumnIndex
     {
+        UUID = 0,
+        RFIDNUMBER = 1,
+        ENTRY = 2,
+        EXIT = 3,
+        CARDREADER = 4,
+        STUDENTNUMBER = 5,
         FIRSTNAME = 6,
-        LASTNAME = 7
+        LASTNAME = 7,
+        PROMOTION = 8,
+        TRAINING = 9,
+        GROUPNUMBER = 10,
+        OPTION = 11
     };
 
 

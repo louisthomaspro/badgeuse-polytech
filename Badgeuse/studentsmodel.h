@@ -15,6 +15,20 @@ class StudentsModel : public QSqlQueryModel
 
     Q_OBJECT
 
+public:
+    enum ColumnIndex
+    {
+        UUID = 0,
+        RFIDNUMBER = 1,
+        STUDENTNUMBER = 2,
+        FIRSTNAME = 3,
+        LASTNAME = 4,
+        PROMOTION = 5,
+        MAIL = 6,
+        TRAINING = 7,
+        GROUPNUMBER = 8,
+        OPTION = 9
+    };
 
 public:
     StudentsModel(QObject* parent = nullptr);
