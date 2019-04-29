@@ -1,6 +1,6 @@
-#include "presencefilterproxymodel.h"
+#include "presencesfilterproxymodel.h"
 
-PresenceFilterProxyModel::PresenceFilterProxyModel(QObject *parent) : QSortFilterProxyModel(parent)
+PresencesFilterProxyModel::PresencesFilterProxyModel(QObject *parent) : QSortFilterProxyModel(parent)
 {
     _firstNameRegExp.setCaseSensitivity(Qt::CaseInsensitive);
     _firstNameRegExp.setPatternSyntax(QRegExp::RegExp);
@@ -8,7 +8,7 @@ PresenceFilterProxyModel::PresenceFilterProxyModel(QObject *parent) : QSortFilte
     _lastNameRegExp.setCaseSensitivity(Qt::CaseInsensitive);
     _lastNameRegExp.setPatternSyntax(QRegExp::RegExp);
 }
-bool PresenceFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+bool PresencesFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex firstNameIndex = sourceModel()->index(sourceRow, PresencesModel::FIRSTNAME, sourceParent);
     QModelIndex lastNameIndex = sourceModel()->index(sourceRow, PresencesModel::LASTNAME, sourceParent);
@@ -19,11 +19,11 @@ bool PresenceFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     return (firstName.contains(_firstNameRegExp) && lastName.contains(_lastNameRegExp));
 }
 
-void PresenceFilterProxyModel::setFirstNameFilter(const QString& regExp){
+void PresencesFilterProxyModel::setFirstNameFilter(const QString& regExp){
     _firstNameRegExp.setPattern(regExp);
     invalidateFilter();
 }
-void PresenceFilterProxyModel::setLastNameFilter(const QString& regExp){
+void PresencesFilterProxyModel::setLastNameFilter(const QString& regExp){
     _lastNameRegExp.setPattern(regExp);
     invalidateFilter();
 }

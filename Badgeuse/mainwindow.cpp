@@ -15,8 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _dbSettings = new QSettings("dbsettings.ini", QSettings::NativeFormat);
 
+    // Init database settings
+    _dbSettings = new QSettings("dbsettings.ini", QSettings::NativeFormat);
     ui->le_host->setText(_dbSettings->value("db_host", "").toString());
     ui->sb_port->setValue(_dbSettings->value("db_port", "").toInt());
     ui->le_dbname->setText(_dbSettings->value("db_dbname", "").toString());
@@ -24,16 +25,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->le_password->setText(_dbSettings->value("db_password", "").toString());
 
 
+    // Init models
     _badgeuseModel = new BadgeuseModel(*_dbSettings, this);
-    _presenceFilterProxyModel = new PresenceFilterProxyModel(this);
+    _presencesFilterProxyModel = new PresencesFilterProxyModel(this);
+//    _studentsFilterProxyModel = new StudentsFilterProxyModel(this);
+
+    _presencesFilterProxyModel->setSourceModel(_badgeuseModel->getPresencesModel());
+    ui->tv_presences->setModel(_presencesFilterProxyModel);
 
 
 
-    // Filter
-    connect(ui->le_pf_firstname, SIGNAL(textChanged(const QString &)), _presenceFilterProxyModel, SLOT(setFirstNameFilter(const QString&)));
-    connect(ui->le_pf_lastname, SIGNAL(textChanged(const QString &)), _presenceFilterProxyModel, SLOT(setLastNameFilter(const QString&)));
+    //------- CONNECT -------//
 
-    // Database save and connect
+    // Filters
+    connect(ui->le_pf_firstname, SIGNAL(textChanged(const QString &)), _presencesFilterProxyModel, SLOT(setFirstNameFilter(const QString&)));
+    connect(ui->le_pf_lastname, SIGNAL(textChanged(const QString &)), _presencesFilterProxyModel, SLOT(setLastNameFilter(const QString&)));
+
+    // Database parameters
     connect(ui->pb_dbconnect, SIGNAL(clicked()), this, SLOT(dbSaveAndConnect()));
 
     // Refresh
@@ -64,93 +72,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pb_deleteoption, SIGNAL(clicked()), this, SLOT(deleteOption()));
 
 
-
-//    _presencesProxy = new QSortFilterProxyModel(this);
-//    _presencesProxy->setSourceModel(_badgeuseModel->getPresencesModel());
-
-//    _pfFirstname = new QSortFilterProxyModel(this);
-//    _pfLastname = new QSortFilterProxyModel(this);
-//    _pfFirstname->setFilterKeyColumn(6);
-//    _pfLastname->setFilterKeyColumn(7);
-
-
-//    _pfFirstname->setSourceModel(_presencesProxy);
-//    _pfLastname->setSourceModel(_pfFirstname);
-
-    _presenceFilterProxyModel->setSourceModel(_badgeuseModel->getPresencesModel());
-    ui->tv_presences->setModel(_presenceFilterProxyModel);
-
-
-//    // GO PROXY
-//    _studentProxy = new QSortFilterProxyModel(this);
-//    _studentProxy->setSourceModel(_badgeuseModel->getStudentsModel());
-//    ui->tv_students->setModel(_studentProxy);
-
-//    _trainingProxy = new QSortFilterProxyModel(this);
-//    _trainingProxy->setSourceModel(_badgeuseModel->getTrainingModel());
-//    ui->tv_training->setModel(_trainingProxy);
-
-//    _optionsProxy = new QSortFilterProxyModel(this);
-//    _optionsProxy->setSourceModel(_badgeuseModel->getOptionsModel());
-//    ui->tv_options->setModel(_optionsProxy);
-
-
     ui->tv_presences->setColumnHidden(0, true);
     ui->tv_students->setColumnHidden(0, true);
     ui->tv_options->setColumnHidden(0, true);
     ui->tv_training->setColumnHidden(0, true);
 
 
-
-
-
-
-
-
-
-//    ui->statusBar->sonPresenceFilterChangedhowMessage(tr("Connexion à la base de données..."));
-
-
-//    model = new presencesModel(this, _db);
-//    QSqlQuery *query = new QSqlQuery("SELECT s.firstname, s.lastname, s.student_number, s.mail_adress, s.rfid_number from student s inner join promotion p on s.promotion_id = p.id");
-//    model->setQuery(*query);
-
-//    for (int i = 0; i < static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0])); i++) {
-//        model->setHeaderData(i, Qt::Horizontal, tr(absencesHeaderTitles[i].name.c_str()));
-//        ui->tv_students->setModel(model);
-//        ui->tv_students->setColumnHidden(i, !absencesHeaderTitles[i].show);
-//    }
-
-
-
-
-
-
-//    fnFilter = new QSortFilterProxyModel(model);
-//    fnFilter->setSourceModel(nmFilter);
-//    fnFilter->setFilterKeyColumn(1);
-
-//    ui->tv_students->setModel(fnFilter);
-
-
-//    connect(ui->lineEdit_5, &QLineEdit::textChanged,
-//            this, &MainWindow::textFilterFamilyNameChanged);
-
-
-//    ui->tv_students->verticalHeader()->hide();
-//    ui->tv_students->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-//    ui->tv_students->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-//    ui->tv_students->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-//    ui->tv_students->show();
-
-//    connect(ui->tv_students->horizontalHeader(), SIGNAL(customContextMenuRequested(QPoint)), this,
-//            SLOT(customHeaderMenuRequested(QPoint)));
-
-
-    //connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(refresh()));
-
+//    ui->statusBar->sonPresenceFilterChangedhowMessage(tr("Status bar..."));
 
 
 }
@@ -162,6 +90,9 @@ MainWindow::~MainWindow()
 }
 
 
+void MainWindow::reload() {
+    _badgeuseModel->reload();
+}
 
 
 /* Dialog add modify student, training, presence, option */
@@ -227,19 +158,21 @@ void MainWindow::openDialog()
 }
 
 
-void MainWindow::reload() {
-    _badgeuseModel->reload();
+QString MainWindow::getTvSelectedUuid(QTableView *tv) {
+    QModelIndexList selectedList = tv->selectionModel()->selectedRows();
+    if (selectedList.length() > 0) {
+        return tv->model()->data(tv->model()->index(selectedList.at(0).row(),0)).toString();
+    } else {
+        QMessageBox::information(this, "Information", "Veuillez selectionner une ligne.");
+        return nullptr;
+    }
 }
 
 
 
 void MainWindow::deleteStudent() {
-    QString selectedUuid;
-
-    QModelIndexList selectedList = ui->tv_students->selectionModel()->selectedRows();
-    if (selectedList.length() > 0) {
-        selectedUuid = ui->tv_students->model()->data(ui->tv_students->model()->index(selectedList.at(0).row(),0)).toString();
-
+    QString selectedUuid = getTvSelectedUuid(ui->tv_students);
+    if (selectedUuid != nullptr) {
         QMessageBox msgBox;
         msgBox.setText("L'étudiant selectionné va être supprimé définitivement. Ses badgeages lié à sa carte étudiant vont être dissociés (mais pas supprimés).");
         msgBox.setInformativeText("Êtes-vous sûr de vouloir continuer ?");
@@ -249,22 +182,13 @@ void MainWindow::deleteStudent() {
         if (ret == QMessageBox::Yes) {
             _badgeuseModel->getStudentsModel()->remove(selectedUuid);
         }
-
-    } else {
-        QMessageBox::information(this, "Information", "Veuillez selectionner une ligne.");
-        return;
     }
-
 }
 
 
 void MainWindow::deletePresence() {
-    QString selectedUuid;
-
-    QModelIndexList selectedList = ui->tv_presences->selectionModel()->selectedRows();
-    if (selectedList.length() > 0) {
-        selectedUuid = ui->tv_presences->model()->data(ui->tv_presences->model()->index(selectedList.at(0).row(),0)).toString();
-
+    QString selectedUuid = getTvSelectedUuid(ui->tv_presences);
+    if (selectedUuid != nullptr) {
         QMessageBox msgBox;
         msgBox.setText("La présence selectionnée va être supprimée définitivement.");
         msgBox.setInformativeText("Êtes-vous sûr de vouloir continuer ?");
@@ -274,23 +198,13 @@ void MainWindow::deletePresence() {
         if (ret == QMessageBox::Yes) {
             _badgeuseModel->getPresencesModel()->remove(selectedUuid);
         }
-
-    } else {
-        QMessageBox::information(this, "Information", "Veuillez selectionner une ligne.");
-        return;
     }
-
 }
 
 
 void MainWindow::deleteTraining() {
-    QString selectedUuid;
-    QTableView *tv = ui->tv_training;
-
-    QModelIndexList selectedList = tv->selectionModel()->selectedRows();
-    if (selectedList.length() > 0) {
-        selectedUuid = tv->model()->data(tv->model()->index(selectedList.at(0).row(),0)).toString();
-
+    QString selectedUuid = getTvSelectedUuid(ui->tv_training);
+    if (selectedUuid != nullptr) {
         QSqlQuery queryCount("select count(*) from badgeuse.students stu where stu.trainingUuid = UNHEX(?);");
         queryCount.addBindValue(selectedUuid);
         queryCount.exec();
@@ -316,10 +230,6 @@ void MainWindow::deleteTraining() {
         if (ret == QMessageBox::Yes) {
             _badgeuseModel->getTrainingModel()->remove(selectedUuid);
         }
-
-    } else {
-        QMessageBox::information(this, "Information", "Veuillez selectionner une ligne.");
-        return;
     }
 }
 
@@ -327,13 +237,8 @@ void MainWindow::deleteTraining() {
 
 
 void MainWindow::deleteOption() {
-    QString selectedUuid;
-    QTableView *tv = ui->tv_options;
-
-    QModelIndexList selectedList = tv->selectionModel()->selectedRows();
-    if (selectedList.length() > 0) {
-        selectedUuid = tv->model()->data(tv->model()->index(selectedList.at(0).row(),0)).toString();
-
+    QString selectedUuid = getTvSelectedUuid(ui->tv_options);
+    if (selectedUuid != nullptr) {
         QSqlQuery queryCount("select count(*) from badgeuse.students stu where stu.trainingUuid = UNHEX(?);");
         queryCount.addBindValue(selectedUuid);
         queryCount.exec();
@@ -359,39 +264,8 @@ void MainWindow::deleteOption() {
         if (ret == QMessageBox::Yes) {
             _badgeuseModel->getTrainingModel()->remove(selectedUuid);
         }
-
-    } else {
-        QMessageBox::information(this, "Information", "Veuillez selectionner une ligne.");
-        return;
     }
 }
-
-
-
-
-
-/*void MainWindow::onPresenceFilterChanged()
-{
-
-    if (sender() == ui->le_pf_firstname) { applyFilter(6, ui->le_pf_firstname->text()); }
-    if (sender() == ui->le_pf_lastname) { applyFilter(7, ui->le_pf_lastname->text()); }
-
-}*/
-
-
-// GO PROXY
-/*void MainWindow::applyFilter(int index, QString ntext)
-{
-    switch(index)
-    {
-        case 6:
-            _pfFirstname->setFilterRegExp(QRegExp(ntext, Qt::CaseInsensitive));
-            break;
-        case 7:
-            _pfLastname->setFilterRegExp(QRegExp(ntext, Qt::CaseInsensitive));
-            break;
-    }
-}*/
 
 
 
@@ -410,57 +284,5 @@ void MainWindow::dbSaveAndConnect()
          QMessageBox::critical(this, "Attention", "Impossible de se connecter à la base de données.", QMessageBox::Ok);
      }
 }
-
-
-
-//void MainWindow::textFilterFamilyNameChanged()
-//{
-//    QRegExp regExp(ui->lineEdit_5->text());
-//    fnFilter->setFilterRegExp(regExp);
-//}
-
-
-//void MainWindow::customHeaderMenuRequested(QPoint pos){
-////    QModelIndex index = ui->tv_students->indexAt(pos);
-
-//    QMenu *menu=new QMenu(this);
-
-//    for (int i = 0; i < static_cast<int>(sizeof(absencesHeaderTitles) / sizeof (absencesHeaderTitles[0])); i++) {
-//        QAction* fooAction = new QAction(absencesHeaderTitles[i].name.c_str(), this);
-//        fooAction->setData(i);
-//        fooAction->setCheckable(true);
-//        fooAction->setChecked(absencesHeaderTitles[i].show);
-////        connect(fooAction, SIGNAL(triggered()), this, SLOT(toggleColumn()));
-//        connect(fooAction, &QAction::triggered, [this, fooAction](){
-//                toggleColumn(fooAction->data());
-//            });
-//        menu->addAction(fooAction);
-//    }
-
-//    menu->popup(ui->tv_students->horizontalHeader()->viewport()->mapToGlobal(pos));
-//}
-
-//void MainWindow::refresh()
-//{
-//    //model->select();
-//}
-//void MainWindow::toggleColumn(QVariant v)
-//{
-//    bool exec = true;
-//    bool newValue = ui->tv_students->isColumnHidden(v.toInt());
-
-//    int cpt_show = 0;
-//    if (!newValue) { // si on cache un élement
-//        for (Col& s: absencesHeaderTitles){ // on compte le nombre d'élement affiché
-//            if (s.show) cpt_show++;
-//        }
-//        if (cpt_show < 2) exec = false; // si il reste 1 element, on ne le cache pas
-//    }
-
-//    if (exec) {
-//        absencesHeaderTitles[v.toInt()].show = newValue;
-//        ui->tv_students->setColumnHidden(v.toInt(), !newValue);
-//    }
-//}
 
 

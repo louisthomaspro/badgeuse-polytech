@@ -14,7 +14,7 @@
 #include "presencesdialog.h"
 #include "trainingdialog.h"
 #include "optionsdialog.h"
-#include "presencefilterproxymodel.h"
+#include "presencesfilterproxymodel.h"
 #include <QSettings>
 
 using namespace std;
@@ -32,37 +32,28 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private:
-    //void applyFilter(int index, QString ntext);
+
+public:
+    QString getTvSelectedUuid(QTableView *tv);
+
 
 private slots:
-//    void refresh();
-//    void customHeaderMenuRequested(QPoint pos);
-//    void toggleColumn(QVariant v);
-//    void textFilterFamilyNameChanged();
-    //void onPresenceFilterChanged();
 
     void dbSaveAndConnect();
 
     void openDialog();
+
     void deleteStudent();
     void deletePresence();
     void deleteOption();
     void deleteTraining();
+
     void reload();
 
 
 
 private:
     Ui::MainWindow *ui;
-    QSqlDatabase _db;
-    PresencesModel *model2;
-    QSqlQueryModel *model;
-
-    QRegExp nameRegExp;
-    QRegExp familyNameRegExp;
-    QSortFilterProxyModel *nmFilter;
-    QSortFilterProxyModel *fnFilter;
 
     BadgeuseModel *_badgeuseModel;
 
@@ -71,18 +62,12 @@ private:
     TrainingDialog *_trainingDialog;
     OptionsDialog *_optionsDialog;
 
-    PresenceFilterProxyModel *_presenceFilterProxyModel;
+    PresencesFilterProxyModel *_presencesFilterProxyModel;
+//    StudentsFilterProxyModel *_studentsFilterProxyModel;
 
-
-//    QSortFilterProxyModel *_studentProxy;
-//    QSortFilterProxyModel *_presencesProxy;
-//    QSortFilterProxyModel *_trainingProxy;
-//    QSortFilterProxyModel *_optionsProxy;
 
     QSettings *_dbSettings;
 
-//    QSortFilterProxyModel *_pfFirstname;
-//    QSortFilterProxyModel *_pfLastname;
 
 
 

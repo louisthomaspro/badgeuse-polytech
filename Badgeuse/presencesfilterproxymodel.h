@@ -1,15 +1,15 @@
-#ifndef PRESENCEFILTERPROXYMODEL_H
-#define PRESENCEFILTERPROXYMODEL_H
+#ifndef PRESENCESFILTERPROXYMODEL_H
+#define PRESENCESFILTERPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
 #include "presencesmodel.h"
 
 
-class PresenceFilterProxyModel : public QSortFilterProxyModel
+class PresencesFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    explicit PresenceFilterProxyModel(QObject *parent = nullptr);
+    explicit PresencesFilterProxyModel(QObject *parent = nullptr);
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const  override;
 public slots:
     void setFirstNameFilter(const QString& regExp);

@@ -32,8 +32,8 @@ SOURCES += \
     optionsdialog.cpp \
     optionsmodel.cpp \
     others.cpp \
-    presencefilterproxymodel.cpp \
     presencesdialog.cpp \
+    presencesfilterproxymodel.cpp \
     presencesmodel.cpp \
     studentsmodel.cpp \
     studentsdialog.cpp \
@@ -45,8 +45,8 @@ HEADERS += \
     badgeusemodel.h \
     optionsdialog.h \
     optionsmodel.h \
-    presencefilterproxymodel.h \
     presencesdialog.h \
+    presencesfilterproxymodel.h \
     presencesmodel.h \
     studentsmodel.h \
     studentsdialog.h \
