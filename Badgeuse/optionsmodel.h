@@ -23,9 +23,9 @@ public:
 
     void initModel();
     void reload();
-    void add(QString name);
+    void add(QString name, QString trainingUuid);
     void remove(QString uuid);
-    void modify(QString uuid, QString name);
+    void modify(QString uuid, QString trainingUuid, QString name);
     QMap<QString, QVariant> get(QString uuid);
 
 

@@ -25,15 +25,15 @@ void StudentsModel::initModel()
 {
     QSqlQuery querySelect("select "
                     "stu.uuid,"
-                    "stu.rfidNumber,"
-                    "stu.studentNumber as numero_etudiant,"
-                    "stu.firstname as prenom,"
-                    "stu.lastname as nom,"
-                    "stu.degreeYear as promotion,"
-                    "stu.mail,"
-                    "t.name as formation,"
-                    "stu.groupNumber as groupe,"
-                    "GROUP_CONCAT(DISTINCT o.name SEPARATOR ', ') as options "
+                    "stu.rfidNumber as 'Numéro Rfid',"
+                    "stu.studentNumber as 'Numéro Étudiant',"
+                    "stu.firstname as Prénom,"
+                    "stu.lastname as Nom,"
+                    "stu.degreeYear as Promotion,"
+                    "stu.mail as Mail,"
+                    "t.name as Formation,"
+                    "stu.groupNumber as Groupe,"
+                    "GROUP_CONCAT(DISTINCT o.name SEPARATOR ', ') as Options "
                 "from badgeuse.students stu "
                 "left join badgeuse.training t on stu.trainingUuid = t.uuid "
                 "left join badgeuse.rlToptionsStudents ostu on ostu.studentsUuid = stu.uuid "
@@ -175,6 +175,21 @@ void StudentsModel::modify(QString uuid, QString studentNumber, QString firstnam
 
     if(!queryStudentDeleteOptions.exec()) {
         qDebug() << "SqlError: " << queryStudentDeleteOptions.lastError().text();
+        return;
+    } else {
+//        qDebug() << "Options removed.";
+    }
+
+
+    // Update presence studentUuid
+    QSqlQuery queryStudentUpdatePresences("update badgeuse.scans set "
+                                          "studentUuid = UNHEX(?) "
+                                            "where rfidNumber = UNHEX(?);");
+    queryStudentUpdatePresences.addBindValue(uuid);
+    queryStudentUpdatePresences.addBindValue(rfidNumber);
+
+    if(!queryStudentUpdatePresences.exec()) {
+        qDebug() << "SqlError: " << queryStudentUpdatePresences.lastError().text();
         return;
     } else {
 //        qDebug() << "Options removed.";

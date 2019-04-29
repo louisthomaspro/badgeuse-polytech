@@ -98,32 +98,7 @@ bool PresencesDialog::validateValues() {
 
     QString error = QString("");
 
-
-//    if (ui->le_studentNumber->text().length() != 8) {
-//        error += "\n - La taille du numéro étudiant est incorrect.";
-//    }
-//    QRegExp digitREX("\\d*");  // a digit (\d), zero or more times (*)
-//    if (!digitREX.exactMatch(ui->le_studentNumber->text())) {
-//        error += "\n - Le numéro étudiant doit être composé uniquement de chiffre.";
-//    }
-
-//    if (ui->le_firstname->text().length() < 1) {
-//        error += "\n - Le champ 'Nom' doit être rempli.";
-//    }
-//    if (ui->le_lastname->text().length() < 1) {
-//        error += "\n - Le champ 'Prénom' doit être rempli.";
-//    }
-
-//    QRegExp mailREX("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b");
-//    mailREX.setCaseSensitivity(Qt::CaseInsensitive);
-//    mailREX.setPatternSyntax(QRegExp::RegExp);
-//    if (!mailREX.exactMatch(ui->le_mail->text())) {
-//        error += "\n - L'adresse mail est incorrect.";
-//    }
-
-
-    // CHECK RFID IF ITS GOOD and not empty
-
+    // TODO
 
 
     if (error.length()>0) {

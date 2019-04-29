@@ -12,6 +12,10 @@
 #include "badgeusemodel.h"
 #include "studentsdialog.h"
 #include "presencesdialog.h"
+#include "trainingdialog.h"
+#include "optionsdialog.h"
+#include "presencefilterproxymodel.h"
+#include <QSettings>
 
 using namespace std;
 
@@ -24,25 +28,29 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    struct Col {
-        string name;
-        bool show;
-    };
-
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+private:
+    //void applyFilter(int index, QString ntext);
 
 private slots:
 //    void refresh();
 //    void customHeaderMenuRequested(QPoint pos);
 //    void toggleColumn(QVariant v);
 //    void textFilterFamilyNameChanged();
-//    void textFilterNameChanged();
-    void openStudentsDialog();
+    //void onPresenceFilterChanged();
+
+    void dbSaveAndConnect();
+
+    void openDialog();
     void deleteStudent();
-    void openPresencesDialog();
     void deletePresence();
+    void deleteOption();
+    void deleteTraining();
+    void reload();
+
 
 
 private:
@@ -50,18 +58,31 @@ private:
     QSqlDatabase _db;
     PresencesModel *model2;
     QSqlQueryModel *model;
-    QSortFilterProxyModel *sort_filter;
+
     QRegExp nameRegExp;
     QRegExp familyNameRegExp;
     QSortFilterProxyModel *nmFilter;
     QSortFilterProxyModel *fnFilter;
 
     BadgeuseModel *_badgeuseModel;
+
     StudentsDialog *_studentsDialog;
     PresencesDialog *_presencesDialog;
+    TrainingDialog *_trainingDialog;
+    OptionsDialog *_optionsDialog;
+
+    PresenceFilterProxyModel *_presenceFilterProxyModel;
 
 
-    Col absencesHeaderTitles[6] = { {"Prénom", 1},{"Nom", 1}, {"Promotion", 1}, {"Numéro étudiant", 1}, {"Mail", 0}, {"Numéro RFID", 0}};
+//    QSortFilterProxyModel *_studentProxy;
+//    QSortFilterProxyModel *_presencesProxy;
+//    QSortFilterProxyModel *_trainingProxy;
+//    QSortFilterProxyModel *_optionsProxy;
+
+    QSettings *_dbSettings;
+
+//    QSortFilterProxyModel *_pfFirstname;
+//    QSortFilterProxyModel *_pfLastname;
 
 
 

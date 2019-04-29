@@ -29,29 +29,37 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     badgeusemodel.cpp \
+    optionsdialog.cpp \
     optionsmodel.cpp \
     others.cpp \
+    presencefilterproxymodel.cpp \
     presencesdialog.cpp \
     presencesmodel.cpp \
     studentsmodel.cpp \
     studentsdialog.cpp \
+    trainingdialog.cpp \
     trainingmodel.cpp
 
 HEADERS += \
         mainwindow.h \
     badgeusemodel.h \
+    optionsdialog.h \
     optionsmodel.h \
+    presencefilterproxymodel.h \
     presencesdialog.h \
     presencesmodel.h \
     studentsmodel.h \
     studentsdialog.h \
     qchecklist.h \
+    trainingdialog.h \
     trainingmodel.h
 
 FORMS += \
         mainwindow.ui \
+    optionsdialog.ui \
     studentsdialog.ui \
-    presencesdialog.ui
+    presencesdialog.ui \
+    trainingdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

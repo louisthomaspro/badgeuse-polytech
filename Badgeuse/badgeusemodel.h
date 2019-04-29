@@ -8,6 +8,10 @@
 #include <QSqlError>
 #include "presencesmodel.h"
 #include "studentsmodel.h"
+#include "optionsmodel.h"
+#include "trainingmodel.h"
+#include <QSettings>
+#include <QApplication>
 
 class BadgeuseModel : public QObject
 {
@@ -16,11 +20,15 @@ class BadgeuseModel : public QObject
 
 
 public:
-    BadgeuseModel(QObject* parent = nullptr);
-    void initDbConnection();
+    BadgeuseModel(QSettings &dbSettings, QObject* parent = nullptr);
+    bool initDbConnection();
     void initModels();
     PresencesModel *getPresencesModel();
     StudentsModel *getStudentsModel();
+    OptionsModel *getOptionsModel();
+    TrainingModel *getTrainingModel();
+
+    void reload();
 
 private:
 
@@ -29,6 +37,10 @@ private:
     QSqlDatabase _db;
     PresencesModel *_presencesModel;
     StudentsModel *_studentsModel;
+    OptionsModel *_optionsModel;
+    TrainingModel *_trainingModel;
+
+    QSettings *_dbSettings;
 
 
 };
