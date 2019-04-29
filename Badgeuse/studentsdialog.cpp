@@ -21,7 +21,6 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
     connect(this, SIGNAL(accepted()), this, SLOT(validateValues()));
 
 
-
     // Init training combobox
     QSqlQuery queryTraining("select t.uuid, t.name from badgeuse.training t;");
     while (queryTraining.next()) {
@@ -58,9 +57,6 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
 
         ui->l_title->setText("Modification d'un étudiant");
 
-
-//        qDebug() << "Loading uuid " + *_studentUuid;
-
         QMap<QString, QVariant> studentInfo = _studentModel->getStudent(*_studentUuid);
 
         ui->le_studentNumber->setText(studentInfo["studentNumber"].toString());
@@ -68,7 +64,6 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
         ui->le_lastname->setText(studentInfo["lastname"].toString());
         ui->le_mail->setText(studentInfo["mail"].toString());
         ui->sb_degreeYear->setValue(studentInfo["degreeYear"].toInt());
-        // Find text direct ?
         ui->cb_trainingName->setCurrentText(studentInfo["trainingName"].toString());
         ui->sb_group->setValue(studentInfo["group"].toInt());
 
@@ -88,9 +83,8 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
         ui->l_title->setText("Ajout d'un étudiant");
     }
 
-
-
 }
+
 
 StudentsDialog::~StudentsDialog()
 {
@@ -99,9 +93,8 @@ StudentsDialog::~StudentsDialog()
 
 
 void StudentsDialog::updateOptions(const int& index) {
-//    qDebug() << "Loading " + value;
 
-    // INIT TRAINING
+    // Init training
     QSqlQuery queryUpdateOptions("select o.uuid, o.name from badgeuse.toptions o "
                   "inner join badgeuse.training t on o.trainingUuid = t.uuid "
                   "where t.uuid = UNHEX(?);");
@@ -120,7 +113,6 @@ void StudentsDialog::accept()
 {
 
     if (validateValues()) {
-
         if (_studentUuid->isEmpty()) {
             _studentModel->add(
                         ui->le_studentNumber->text(),
@@ -145,11 +137,8 @@ void StudentsDialog::accept()
                         ui->cb_rfidNumber->currentData().toString(),
                         _optionsList->getCheckedItems());
         }
-
         QDialog::accept();
     }
-
-
 }
 
 
@@ -179,10 +168,6 @@ bool StudentsDialog::validateValues() {
     if (!mailREX.exactMatch(ui->le_mail->text())) {
         error += "\n - L'adresse mail est incorrect.";
     }
-
-
-    // CHECK RFID IF ITS GOOD and not empty
-
 
 
     if (error.length()>0) {

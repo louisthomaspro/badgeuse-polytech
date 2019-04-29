@@ -14,10 +14,8 @@ OptionsDialog::OptionsDialog(OptionsModel *optionsModel, QWidget *parent, QStrin
 
     if (!_optionUuid->isEmpty()) {
         ui->l_title->setText("Modification d'une option");
-
         QMap<QString, QVariant> info = _optionsModel->get(*_optionUuid);
         ui->le_name->setText(info["name"].toString());
-
     } else {
         ui->l_title->setText("Ajout d'une option");
     }
@@ -40,7 +38,6 @@ void OptionsDialog::accept()
         } else {
             _optionsModel->modify(*_optionUuid, ui->le_name->text(), ui->cb_training->currentData().toString());
         }
-
         QDialog::accept();
     }
 }

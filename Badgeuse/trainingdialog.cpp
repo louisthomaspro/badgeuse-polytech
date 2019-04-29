@@ -24,6 +24,7 @@ TrainingDialog::TrainingDialog(TrainingModel *trainingModel, QWidget *parent, QS
 
 }
 
+
 TrainingDialog::~TrainingDialog()
 {
     delete ui;
@@ -34,13 +35,11 @@ TrainingDialog::~TrainingDialog()
 void TrainingDialog::accept()
 {
     if (validateValues()) {
-
         if (_trainingUuid->isEmpty()) {
             _trainingModel->add(ui->le_name->text());
         } else {
             _trainingModel->modify(*_trainingUuid, ui->le_name->text());
         }
-
         QDialog::accept();
     }
 }

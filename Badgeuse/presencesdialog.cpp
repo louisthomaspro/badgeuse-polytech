@@ -38,9 +38,6 @@ PresencesDialog::PresencesDialog(PresencesModel *presenceModel, QWidget *parent,
 
         ui->l_title->setText("Modification d'une présence");
 
-
-//        qDebug() << "Loading uuid " + *_presenceUuid;
-
         QMap<QString, QVariant> presenceInfo = _presenceModel->getPresence(*_presenceUuid);
 
         ui->cb_cardReader->setCurrentIndex(ui->cb_cardReader->findData(presenceInfo["cardreaderUuid"].toByteArray().toHex()));
@@ -58,6 +55,8 @@ PresencesDialog::PresencesDialog(PresencesModel *presenceModel, QWidget *parent,
 
 }
 
+
+
 PresencesDialog::~PresencesDialog()
 {
     delete ui;
@@ -67,9 +66,7 @@ PresencesDialog::~PresencesDialog()
 
 void PresencesDialog::accept()
 {
-
     if (validateValues()) {
-
         if (_presenceUuid->isEmpty()) {
             _presenceModel->add(
                         ui->dt_entry->dateTime().toTime_t(),
@@ -86,11 +83,8 @@ void PresencesDialog::accept()
                         ui->cb_student->currentData().toString()
                         );
         }
-
         QDialog::accept();
     }
-
-
 }
 
 

@@ -31,7 +31,6 @@ SOURCES += \
     badgeusemodel.cpp \
     optionsdialog.cpp \
     optionsmodel.cpp \
-    others.cpp \
     presencesdialog.cpp \
     presencesfilterproxymodel.cpp \
     presencesmodel.cpp \
