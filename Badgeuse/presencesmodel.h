@@ -15,6 +15,14 @@ class PresencesModel : public QSqlQueryModel
 
     Q_OBJECT
 
+public:
+    enum ColumnIndex
+    {
+        FIRSTNAME = 6,
+        LASTNAME = 7
+    };
+
+
 
 public:
     PresencesModel(QObject* parent = nullptr);

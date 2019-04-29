@@ -3,14 +3,15 @@
 PresenceFilterProxyModel::PresenceFilterProxyModel(QObject *parent) : QSortFilterProxyModel(parent)
 {
     _firstNameRegExp.setCaseSensitivity(Qt::CaseInsensitive);
-    _lastNameRegExp.setCaseSensitivity(Qt::CaseInsensitive);
     _firstNameRegExp.setPatternSyntax(QRegExp::RegExp);
+
+    _lastNameRegExp.setCaseSensitivity(Qt::CaseInsensitive);
     _lastNameRegExp.setPatternSyntax(QRegExp::RegExp);
 }
 bool PresenceFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
-    QModelIndex firstNameIndex = sourceModel()->index(sourceRow, 6, sourceParent);
-    QModelIndex lastNameIndex = sourceModel()->index(sourceRow, 7, sourceParent);
+    QModelIndex firstNameIndex = sourceModel()->index(sourceRow, PresencesModel::FIRSTNAME, sourceParent);
+    QModelIndex lastNameIndex = sourceModel()->index(sourceRow, PresencesModel::LASTNAME, sourceParent);
 
     QString firstName = sourceModel()->data(firstNameIndex).toString();
     QString lastName = sourceModel()->data(lastNameIndex).toString();

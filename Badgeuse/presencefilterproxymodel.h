@@ -2,6 +2,7 @@
 #define PRESENCEFILTERPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
+#include "presencesmodel.h"
 
 
 class PresenceFilterProxyModel : public QSortFilterProxyModel
