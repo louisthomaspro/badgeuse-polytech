@@ -10,6 +10,8 @@
 #include <QSqlError>
 #include <QListIterator>
 #include "presencesmodel.h"
+#include "cardreadersmodel.h"
+#include "studentsmodel.h"
 #include "qchecklist.h"
 #include "ui_presencesdialog.h"
 
@@ -23,7 +25,7 @@ class PresencesDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PresencesDialog(PresencesModel *presenceModel, QWidget *parent = nullptr, QString presenceUuid = QString());
+    explicit PresencesDialog(PresencesModel *presencesModel, CardReadersModel *cardReadersModel, StudentsModel *studentsModel, QWidget *parent = nullptr, QString presenceUuid = QString());
     ~PresencesDialog();
 
 
@@ -37,6 +39,8 @@ private:
     QList<QString> _values;
     QCheckList *_optionsList;
     PresencesModel *_presenceModel;
+    CardReadersModel *_cardReadersModel;
+    StudentsModel *_studentsDialog;
     QString *_presenceUuid;
 };
 

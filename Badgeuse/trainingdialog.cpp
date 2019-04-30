@@ -49,7 +49,9 @@ bool TrainingDialog::validateValues()
 {
     QString error = QString("");
 
-    // TODO
+    if (ui->le_name->text().length() < 1) {
+        error += "\n - Le champ 'Nom' doit être rempli.";
+    }
 
     if (error.length()>0) {
         QMessageBox::critical(this, "Attention",

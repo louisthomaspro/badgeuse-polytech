@@ -5,7 +5,9 @@ BadgeuseModel::BadgeuseModel(QSettings &dbSettings, QObject* parent) : QObject(p
 
     _dbSettings = &dbSettings;
 
+    _db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
     initDbConnection();
+
     _presencesModel = new PresencesModel(this);
     _optionsModel = new OptionsModel(this);
     _studentsModel = new StudentsModel(*_optionsModel, this);
@@ -24,16 +26,14 @@ bool BadgeuseModel::initDbConnection()
     QString user = _dbSettings->value("db_user", "").toString();
     QString password = _dbSettings->value("db_password", "").toString();
 
+    _db->setHostName(host);
+    _db->setDatabaseName(dbname);
+    _db->setUserName(user);
+    _db->setPassword(password);
+    _db->setPort(port);
+    _db->setConnectOptions("MYSQL_OPT_CONNECT_TIMEOUT=4");
 
-    _db = QSqlDatabase::addDatabase("QMYSQL");
-    _db.setHostName(host);
-    _db.setDatabaseName(dbname);
-    _db.setUserName(user);
-    _db.setPassword(password);
-    _db.setPort(port);
-    _db.setConnectOptions("MYSQL_OPT_CONNECT_TIMEOUT=4");
-
-    if (!_db.open())
+    if (!_db->open())
     {
         qDebug("Problème de connexion à la base de données");
         return false;
@@ -55,7 +55,7 @@ PresencesModel* BadgeuseModel::getPresencesModel() { return _presencesModel; }
 StudentsModel* BadgeuseModel::getStudentsModel() { return _studentsModel; }
 OptionsModel* BadgeuseModel::getOptionsModel() { return _optionsModel; }
 TrainingModel* BadgeuseModel::getTrainingModel() { return  _trainingModel; }
-CardReaderModel* BadgeuseModel::getCardReaderModel() { return  _cardReaderModel; }
+CardReadersModel* BadgeuseModel::getCardReaderModel() { return  _cardReaderModel; }
 
 
 void BadgeuseModel::reload() {

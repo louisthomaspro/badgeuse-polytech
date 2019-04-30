@@ -1,12 +1,12 @@
-#include "cardreadermodel.h"
+#include "cardreadersmodel.h"
 
-CardReaderModel::CardReaderModel()
+CardReadersModel::CardReadersModel()
 {
 
 }
 
 
-QList<QMap<QString, QVariant>> CardReaderModel::get()
+QList<QMap<QString, QVariant>> CardReadersModel::get()
 {
     QSqlQuery query;
     query.prepare("select "

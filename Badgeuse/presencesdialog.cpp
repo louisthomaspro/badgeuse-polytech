@@ -1,13 +1,16 @@
 #include "presencesdialog.h"
 
-PresencesDialog::PresencesDialog(PresencesModel *presenceModel, QWidget *parent, QString presenceUuid) :
+PresencesDialog::PresencesDialog(PresencesModel *presenceModel, CardReadersModel *cardreadersModel, StudentsModel *studentsModel, QWidget *parent, QString presenceUuid) :
     QDialog(parent),
     ui(new Ui::PresencesDialog)
 {
     ui->setupUi(this);
 
     _presenceModel = presenceModel;
+    _cardReadersModel = cardreadersModel;
+    _studentsDialog = studentsModel;
     _presenceUuid = &presenceUuid;
+
 
 
     // Connect
@@ -15,22 +18,18 @@ PresencesDialog::PresencesDialog(PresencesModel *presenceModel, QWidget *parent,
 
 
     // Init cardreaders combobox
-    QSqlQuery queryCardreaders("select cr.uuid, cr.information from badgeuse.cardreaders cr;");
-    ui->cb_cardReader->addItem("", "");
-    while (queryCardreaders.next()) {
-        ui->cb_cardReader->addItem(queryCardreaders.value(1).toString(), queryCardreaders.value(0).toByteArray().toHex());
+    for (QMap<QString, QVariant> item : _cardReadersModel->get()) {
+        ui->cb_cardReader->addItem(item["information"].toString(), item["uuid"].toByteArray().toHex());
     }
 
     // Init students combobox
-    QSqlQuery queryStudents("select stu.uuid, CONCAT(stu.studentNumber, ' - ', stu.firstname, ' ', stu.lastname) from badgeuse.students stu;");
-    ui->cb_student->addItem("", "");
-    while (queryStudents.next()) {
-        ui->cb_student->addItem(queryStudents.value(1).toString(), queryStudents.value(0).toByteArray().toHex());
+    for (QMap<QString, QVariant> item : _studentsDialog->get()) {
+        ui->cb_student->addItem(item["text"].toString(), item["uuid"].toByteArray().toHex());
     }
 
     // Init dateTime
-    ui->dt_entry->setDate(QDate::currentDate());
-    ui->dt_exit->setDate(QDate::currentDate());
+    ui->dte_entry->setDate(QDate::currentDate());
+    ui->dte_exit->setDate(QDate::currentDate());
 
 
 
@@ -43,15 +42,13 @@ PresencesDialog::PresencesDialog(PresencesModel *presenceModel, QWidget *parent,
         ui->cb_cardReader->setCurrentIndex(ui->cb_cardReader->findData(presenceInfo["cardreaderUuid"].toByteArray().toHex()));
         ui->cb_student->setCurrentIndex(ui->cb_student->findData(presenceInfo["studentUuid"].toByteArray().toHex()));
 
-        ui->dt_entry->setDateTime(QDateTime::fromTime_t(presenceInfo["dateTimeEntry"].toUInt()));
-        ui->dt_exit->setDateTime(QDateTime::fromTime_t(presenceInfo["dateTimeExit"].toUInt()));
+        ui->dte_entry->setDateTime(QDateTime::fromTime_t(presenceInfo["dateTimeEntry"].toUInt()));
+        ui->dte_exit->setDateTime(QDateTime::fromTime_t(presenceInfo["dateTimeExit"].toUInt()));
 
 
     } else {
         ui->l_title->setText("Ajout d'une présence");
     }
-
-
 
 }
 
@@ -69,16 +66,16 @@ void PresencesDialog::accept()
     if (validateValues()) {
         if (_presenceUuid->isEmpty()) {
             _presenceModel->add(
-                        ui->dt_entry->dateTime().toTime_t(),
-                        ui->dt_exit->dateTime().toTime_t(),
+                        ui->dte_entry->dateTime().toTime_t(),
+                        ui->dte_exit->dateTime().toTime_t(),
                         ui->cb_cardReader->currentData().toString(),
                         ui->cb_student->currentData().toString()
                         );
         } else {
             _presenceModel->modify(
                         *_presenceUuid,
-                        ui->dt_entry->dateTime().toTime_t(),
-                        ui->dt_exit->dateTime().toTime_t(),
+                        ui->dte_entry->dateTime().toTime_t(),
+                        ui->dte_exit->dateTime().toTime_t(),
                         ui->cb_cardReader->currentData().toString(),
                         ui->cb_student->currentData().toString()
                         );
@@ -88,12 +85,13 @@ void PresencesDialog::accept()
 }
 
 
-bool PresencesDialog::validateValues() {
+bool PresencesDialog::validateValues()
+{
+    QString error = QString();
 
-    QString error = QString("");
-
-    // TODO
-
+    if (ui->dte_entry->dateTime().toTime_t() >= ui->dte_exit->dateTime().toTime_t()) {
+        error += "\n - La date de sortie doit être supérieur à la date d'entrée.";
+    }
 
     if (error.length()>0) {
         QMessageBox::critical(this, "Attention",
@@ -103,6 +101,4 @@ bool PresencesDialog::validateValues() {
     }
 
     return true;
-
-
 }

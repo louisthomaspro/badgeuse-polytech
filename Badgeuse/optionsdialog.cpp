@@ -15,7 +15,7 @@ OptionsDialog::OptionsDialog(OptionsModel *optionsModel, TrainingModel *training
     connect(this, SIGNAL(accepted()), this, SLOT(validateValues()));
 
 
-    // Fill trainings
+    // Fill training combobox
     ui->cb_training->clear();
     for (QMap<QString, QVariant> item : _trainingModel->get()) {
         ui->cb_training->addItem(item["name"].toString(), item["uuid"].toByteArray().toHex());
@@ -47,7 +47,6 @@ void OptionsDialog::accept()
             _optionsModel->add(ui->le_name->text(), ui->cb_training->currentData().toString());
         } else {
             _optionsModel->modify(*_optionUuid, ui->le_name->text(), ui->cb_training->currentData().toString());
-            qDebug() << ui->cb_training->currentData().toString();
         }
         QDialog::accept();
     }
@@ -58,7 +57,9 @@ bool OptionsDialog::validateValues()
 {
     QString error = QString("");
 
-    // TODO
+    if (ui->le_name->text().length() < 1) {
+        error += "\n - Le champ 'Nom' doit être rempli.";
+    }
 
     if (error.length()>0) {
         QMessageBox::critical(this, "Attention",

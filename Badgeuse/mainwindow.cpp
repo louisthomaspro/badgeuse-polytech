@@ -133,13 +133,15 @@ MainWindow::~MainWindow()
 
 
 // Reload models and filters
-void MainWindow::reload() {
+void MainWindow::reload()
+{
     _badgeuseModel->reload();
     initFilters();
 }
 
 
-void MainWindow::initFilters() {
+void MainWindow::initFilters()
+{
 
     // Fill pf cardreaders
     ui->cb_pf_cardreader->clear();
@@ -179,7 +181,8 @@ void MainWindow::initFilters() {
 }
 
 
-void MainWindow::updatePfOptions() {
+void MainWindow::updatePfOptions()
+{
     // Fill options
     ui->cb_pf_option->clear();
     ui->cb_pf_option->addItem("");
@@ -188,7 +191,8 @@ void MainWindow::updatePfOptions() {
     }
 }
 
-void MainWindow::updateSfOptions() {
+void MainWindow::updateSfOptions()
+{
     // Fill options
     ui->cb_sf_option->clear();
     ui->cb_sf_option->addItem("");
@@ -198,13 +202,13 @@ void MainWindow::updateSfOptions() {
 }
 
 
-void MainWindow::exportPresences() {
-
+void MainWindow::exportPresences()
+{
 
     QList<QMap<QString, QVariant>> values = _badgeuseModel->getPresencesModel()->getExport(
-    ui->cb_export_student->currentData().toString(),
-    (ui->gb_export_period->isChecked() ? ui->de_export_begin->dateTime() : QDateTime()),
-    (ui->gb_export_period->isChecked() ? ui->de_export_end->dateTime() : QDateTime())
+        ui->cb_export_student->currentData().toString(),
+        (ui->gb_export_period->isChecked() ? ui->de_export_begin->dateTime() : QDateTime()),
+        (ui->gb_export_period->isChecked() ? ui->de_export_end->dateTime() : QDateTime())
     );
 
     if (values.size() <= 0) {
@@ -225,10 +229,9 @@ void MainWindow::exportPresences() {
            textData += col.toString();
            textData += ", ";
         }
-        textData += "\n"; // (optional: for new line segmentation)
+        textData += "\n";
     }
 
-    // [Save to file] (header file <QFile> needed)
     // .csv
     QString savefile = QFileDialog::getSaveFileName(this,
                                                     tr("Open File"),
@@ -270,6 +273,7 @@ void MainWindow::openDialog()
         }
     }
 
+
     if (sender() == ui->pb_modifystudent || sender() == ui->pb_addstudent || sender() == ui->tv_students)
     {
         _studentsDialog = new StudentsDialog(_badgeuseModel->getStudentsModel(), this, selectedUuid);
@@ -280,7 +284,7 @@ void MainWindow::openDialog()
     }
     else if (sender() == ui->pb_modifypresence || sender() == ui->pb_addpresence || sender() == ui->tv_presences)
     {
-        _presencesDialog = new PresencesDialog(_badgeuseModel->getPresencesModel(), this, selectedUuid);
+        _presencesDialog = new PresencesDialog(_badgeuseModel->getPresencesModel(), _badgeuseModel->getCardReaderModel(), _badgeuseModel->getStudentsModel(), this, selectedUuid);
         if (_presencesDialog->exec() == QDialog::Accepted) {
             reload();
         }
@@ -306,7 +310,8 @@ void MainWindow::openDialog()
 }
 
 
-QString MainWindow::getTvSelectedUuid(QTableView *tv) {
+QString MainWindow::getTvSelectedUuid(QTableView *tv)
+{
     QModelIndexList selectedList = tv->selectionModel()->selectedRows();
     if (selectedList.length() > 0) {
         return tv->model()->data(tv->model()->index(selectedList.at(0).row(),0)).toString();
@@ -318,7 +323,8 @@ QString MainWindow::getTvSelectedUuid(QTableView *tv) {
 
 
 
-void MainWindow::deleteStudent() {
+void MainWindow::deleteStudent()
+{
     QString selectedUuid = getTvSelectedUuid(ui->tv_students);
     if (selectedUuid != nullptr) {
         QMessageBox msgBox;
@@ -335,7 +341,8 @@ void MainWindow::deleteStudent() {
 }
 
 
-void MainWindow::deletePresence() {
+void MainWindow::deletePresence()
+{
     QString selectedUuid = getTvSelectedUuid(ui->tv_presences);
     if (selectedUuid != nullptr) {
         QMessageBox msgBox;
@@ -352,24 +359,11 @@ void MainWindow::deletePresence() {
 }
 
 
-void MainWindow::deleteTraining() {
+void MainWindow::deleteTraining()
+{
     QString selectedUuid = getTvSelectedUuid(ui->tv_training);
     if (selectedUuid != nullptr) {
-        QSqlQuery queryCount;
-        queryCount.prepare("select count(*) from badgeuse.students stu where stu.trainingUuid = UNHEX(?);");
-        queryCount.addBindValue(selectedUuid);
-        queryCount.exec();
-        if (queryCount.first()) {
-            int cpt = queryCount.value(0).toInt();
-            if (cpt > 0) {
-                QString text = QString("Impossible de supprimer cette formation. Il y a %1 étudiant(s) qui y sont rattaché(s).").arg(cpt);
-                QMessageBox::critical(this, "Impossible", text);
-                return;
-            }
-        } else {
-            qDebug() << "Error queryCount " << queryCount.lastError().text();
-            return;
-        }
+
 
         QMessageBox msgBox;
         msgBox.setText("La formation selectionnée va être supprimée définitivement.");
@@ -378,7 +372,9 @@ void MainWindow::deleteTraining() {
         int ret = msgBox.exec();
 
         if (ret == QMessageBox::Yes) {
-            _badgeuseModel->getTrainingModel()->remove(selectedUuid);
+            if (!_badgeuseModel->getTrainingModel()->remove(selectedUuid)) {
+                QMessageBox::critical(this, "Impossible", "Une erreur est survenu. Merci de vérifier si aucun étudiant n'est affectés à cette formation.");
+            }
             _badgeuseModel->reload();
             initFilters();
         }
@@ -388,7 +384,8 @@ void MainWindow::deleteTraining() {
 
 
 
-void MainWindow::deleteOption() {
+void MainWindow::deleteOption()
+{
     QString selectedUuid = getTvSelectedUuid(ui->tv_options);
     if (selectedUuid != nullptr) {
         QMessageBox msgBox;
@@ -398,7 +395,9 @@ void MainWindow::deleteOption() {
         int ret = msgBox.exec();
 
         if (ret == QMessageBox::Yes) {
-            _badgeuseModel->getOptionsModel()->remove(selectedUuid);
+            if (!_badgeuseModel->getOptionsModel()->remove(selectedUuid)) {
+                QMessageBox::critical(this, "Impossible", "Une erreur est survenu. Merci de vérifier si aucun étudiant n'est affectés à cette options.");
+            }
             _badgeuseModel->reload();
             initFilters();
         }
