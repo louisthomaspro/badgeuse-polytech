@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QSqlRecord>
 #include <QDateTime>
+#include "utilities.h"
 
 class PresencesModel : public QSqlQueryModel
 {
@@ -45,6 +46,7 @@ public:
     void add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid);
     void modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid);
     QMap<QString, QVariant> getPresence(QString uuid);
+    QList<QMap<QString, QVariant>> getExport(QString studentUuid, QDateTime QDateTimeBegin, QDateTime QDateTimeEnd);
 
 
 protected:

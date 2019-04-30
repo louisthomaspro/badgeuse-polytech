@@ -90,10 +90,10 @@ QMap<QString, QVariant> TrainingModel::get(QString uuid) {
 
 
 QList<QMap<QString, QVariant>> TrainingModel::get() {
-    QString sql = "select "
+    QSqlQuery query("select "
                   "t.uuid, t.name "
-                  "from badgeuse.training t;";
-    return Utilities::generateQListFromSql(sql);
+                  "from badgeuse.training t;");
+    return Utilities::generateQListFromSql(query);
 }
 
 

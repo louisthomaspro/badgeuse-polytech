@@ -5,12 +5,14 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QDebug>
+#include <QSqlError>
+#include <QMessageBox>
 
 class Utilities
 {
 public:
     Utilities();
-    static QList<QMap<QString, QVariant>> generateQListFromSql(QString &sql);
+    static QList<QMap<QString, QVariant>> generateQListFromSql(QSqlQuery &sql);
 
 private:
 

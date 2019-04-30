@@ -151,3 +151,67 @@ QMap<QString, QVariant> PresencesModel::getPresence(QString uuid) {
     return presenceInfo;
 }
 
+
+
+QList<QMap<QString, QVariant>> PresencesModel::getExport(QString studentUuid, QDateTime QDateTimeBegin, QDateTime QDateTimeEnd) {
+
+    QTime beginTime(0, 0, 0);
+    QTime endTime(23, 59, 59);
+
+    QDateTimeBegin.setTime(beginTime);
+    QDateTimeEnd.setTime(endTime);
+
+    QString sql = QString(
+        "with studentsInformation as ("
+        "select "
+        "stu.uuid, "
+        "stu.rfidNumber, "
+        "stu.studentNumber, "
+        "stu.firstname, "
+        "stu.lastname, "
+        "stu.degreeYear, "
+        "stu.mail, "
+        "t.name as training, "
+        "stu.groupNumber, "
+        "GROUP_CONCAT(DISTINCT o.name SEPARATOR ' | ') as options "
+        "from badgeuse.students stu "
+        "left join badgeuse.training t on stu.trainingUuid = t.uuid "
+        "left join badgeuse.rlToptionsStudents ostu on ostu.studentsUuid = stu.uuid "
+        "left join badgeuse.toptions o on o.uuid = ostu.toptionsUuid "
+        "group by stu.uuid "
+        ") "
+        "select "
+        "DATE_FORMAT(s.dateTimeEntry, '%d/%m/%Y %H:%i:%s') as 'Date dentrée', "
+        "DATE_FORMAT(s.dateTimeExit, '%d/%m/%Y %H:%i:%s') as 'Date de sortie', "
+        "cr.information as Badgeuse, "
+        "stu.studentNumber as 'Numéro Étudiant', "
+        "stu.firstname as Prénom, "
+        "stu.lastname as Nom, "
+        "stu.degreeYear as Promotion, "
+        "stu.training as Formation, "
+        "stu.groupNumber as Groupe, "
+        "stu.options as 'Options' "
+        "from badgeuse.scans s "
+        "left join studentsInformation stu on stu.uuid = s.studentUuid "
+        "left join badgeuse.cardreaders cr on cr.uuid = s.cardReaderUuid "
+        "where 1=1 ");
+
+    if (!studentUuid.isEmpty()) {
+        sql += "and stu.uuid = UNHEX(:studentUuid) ";
+    }
+
+    if (QDateTimeEnd.isValid() && QDateTimeEnd.isValid()) {
+        sql += "and UNIX_TIMESTAMP(s.dateTimeEntry) BETWEEN :dateBegin and :dateEnd ";
+    }
+
+    sql += ";";
+
+    QSqlQuery query;
+    query.prepare(sql);
+    query.bindValue(":studentUuid", studentUuid);
+    query.bindValue(":dateBegin", QDateTimeBegin.toTime_t());
+    query.bindValue(":dateEnd", QDateTimeEnd.toTime_t());
+
+    return Utilities::generateQListFromSql(query);
+}
+

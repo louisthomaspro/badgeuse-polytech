@@ -46,7 +46,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //------- CONNECT -------//
 
     // Connect
+    connect(ui->pb_exportpresences, SIGNAL(clicked()), this, SLOT(exportPresences()));
 
+    // CSV export
+
+    // Update options
     connect(ui->cb_pf_training, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePfOptions()));
     connect(ui->cb_sf_training, SIGNAL(currentIndexChanged(int)), this, SLOT(updateSfOptions()));
 
@@ -154,12 +158,24 @@ void MainWindow::initFilters() {
         ui->cb_sf_training->addItem(item["name"].toString(), item["uuid"].toByteArray().toHex());
     }
 
-    // Set default dates for period
+    // Set default dates for presences period
     ui->de_pf_begindate->setDate(QDate(QDate::currentDate().year(), 1, 1));
     ui->de_pf_enddate->setDate(QDate(QDate::currentDate().year(), 12, 31));
 
+    // Set default dates for export period
+    ui->de_export_begin->setDate(QDate(QDate::currentDate().year(), 1, 1));
+    ui->de_export_end->setDate(QDate(QDate::currentDate().year(), 12, 31));
+
     updatePfOptions();
     updateSfOptions();
+
+    // Init studentList for export
+    ui->cb_export_student->clear();
+    ui->cb_export_student->addItem("");
+    for (QMap<QString, QVariant> item : _badgeuseModel->getStudentsModel()->get()) {
+        ui->cb_export_student->addItem(item["text"].toString(), item["uuid"].toByteArray().toHex());
+    }
+
 }
 
 
@@ -178,6 +194,51 @@ void MainWindow::updateSfOptions() {
     ui->cb_sf_option->addItem("");
     for (QMap<QString, QVariant> item : _badgeuseModel->getOptionsModel()->getFromTraining(ui->cb_sf_training->currentData().toString())) {
         ui->cb_sf_option->addItem(item["name"].toString(), item["uuid"].toByteArray().toHex());
+    }
+}
+
+
+void MainWindow::exportPresences() {
+
+
+    QList<QMap<QString, QVariant>> values = _badgeuseModel->getPresencesModel()->getExport(
+    ui->cb_export_student->currentData().toString(),
+    (ui->gb_export_period->isChecked() ? ui->de_export_begin->dateTime() : QDateTime()),
+    (ui->gb_export_period->isChecked() ? ui->de_export_end->dateTime() : QDateTime())
+    );
+
+    if (values.size() <= 0) {
+        QMessageBox::information(this, "Information", "Aucune donnée trouvée.");
+        return;
+    }
+
+
+    QString textData;
+    foreach( QString key, values.first().keys() ) {
+        textData += key;
+        textData += ", ";
+    }
+    textData += "\n";
+
+    for (QMap<QString, QVariant> row : values) {
+        foreach (QVariant col, row) {
+           textData += col.toString();
+           textData += ", ";
+        }
+        textData += "\n"; // (optional: for new line segmentation)
+    }
+
+    // [Save to file] (header file <QFile> needed)
+    // .csv
+    QString savefile = QFileDialog::getSaveFileName(this,
+                                                    tr("Open File"),
+                                                    QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
+                                                    tr("*.csv"));
+    QFile csvFile(savefile.split(".",QString::SkipEmptyParts).at(0) + ".csv");
+    if(csvFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        QTextStream out(&csvFile);
+        out << textData;
+        csvFile.close();
     }
 }
 
@@ -294,14 +355,14 @@ void MainWindow::deletePresence() {
 void MainWindow::deleteTraining() {
     QString selectedUuid = getTvSelectedUuid(ui->tv_training);
     if (selectedUuid != nullptr) {
-        QSqlQuery queryCount("select count(*) from badgeuse.students stu where stu.trainingUuid = UNHEX(?);");
+        QSqlQuery queryCount;
+        queryCount.prepare("select count(*) from badgeuse.students stu where stu.trainingUuid = UNHEX(?);");
         queryCount.addBindValue(selectedUuid);
         queryCount.exec();
-        int count;
         if (queryCount.first()) {
-            count = queryCount.value(0).toInt();
-            if (count > 0) {
-                QString text = QString("Impossible de supprimer cette formation. Il y a %1 étudiant(s) qui y sont rattaché(s).").arg(count);
+            int cpt = queryCount.value(0).toInt();
+            if (cpt > 0) {
+                QString text = QString("Impossible de supprimer cette formation. Il y a %1 étudiant(s) qui y sont rattaché(s).").arg(cpt);
                 QMessageBox::critical(this, "Impossible", text);
                 return;
             }

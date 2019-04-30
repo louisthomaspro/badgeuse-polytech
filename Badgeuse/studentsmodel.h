@@ -9,6 +9,7 @@
 #include <QtDebug>
 #include <QMessageBox>
 #include <QSqlRecord>
+#include "utilities.h"
 
 class StudentsModel : public QSqlQueryModel
 {
@@ -43,6 +44,7 @@ public:
     void add(QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
     void modify(QString uuid, QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
     QMap<QString, QVariant> getStudent(QString uuid);
+    QList<QMap<QString, QVariant>> get();
 
 
 protected:

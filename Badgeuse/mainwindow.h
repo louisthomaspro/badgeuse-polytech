@@ -18,6 +18,8 @@
 #include "studentsfilterproxymodel.h"
 #include <QSettings>
 #include <utilities.h>
+#include <QFileDialog>
+#include <QStandardPaths>
 
 using namespace std;
 
@@ -50,6 +52,8 @@ private slots:
 
     void updatePfOptions();
     void updateSfOptions();
+
+    void exportPresences();
 
 
 
