@@ -105,10 +105,14 @@ void PresencesFilterProxyModel::setPromotionFilter(const QString& regExp) {
 }
 void PresencesFilterProxyModel::setBeginFilter(const QDateTime& regExp) {
     _beginDate = regExp;
+    QTime n(0, 0, 0);
+    _beginDate.setTime(n);
     invalidateFilter();
 }
 void PresencesFilterProxyModel::setEndFilter(const QDateTime& regExp) {
     _endDate = regExp;
+    QTime n(23, 59, 59);
+    _endDate.setTime(n);
     invalidateFilter();
 }
 void PresencesFilterProxyModel::setPeriodFilter(const bool& regExp) {

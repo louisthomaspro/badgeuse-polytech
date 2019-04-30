@@ -1,21 +1,31 @@
 #include "optionsdialog.h"
 
-OptionsDialog::OptionsDialog(OptionsModel *optionsModel, QWidget *parent, QString optionUuid) :
+OptionsDialog::OptionsDialog(OptionsModel *optionsModel, TrainingModel *trainingModel, QWidget *parent, QString optionUuid) :
     QDialog(parent),
     ui(new Ui::OptionsDialog)
 {
     ui->setupUi(this);
 
     _optionsModel = optionsModel;
+    _trainingModel = trainingModel;
     _optionUuid = &optionUuid;
+
 
     // Connect
     connect(this, SIGNAL(accepted()), this, SLOT(validateValues()));
+
+
+    // Fill trainings
+    ui->cb_training->clear();
+    for (QMap<QString, QVariant> item : _trainingModel->get()) {
+        ui->cb_training->addItem(item["name"].toString(), item["uuid"].toByteArray().toHex());
+    }
 
     if (!_optionUuid->isEmpty()) {
         ui->l_title->setText("Modification d'une option");
         QMap<QString, QVariant> info = _optionsModel->get(*_optionUuid);
         ui->le_name->setText(info["name"].toString());
+        ui->cb_training->setCurrentIndex(ui->cb_training->findData(info["trainingUuid"].toByteArray().toHex()));
     } else {
         ui->l_title->setText("Ajout d'une option");
     }
@@ -37,6 +47,7 @@ void OptionsDialog::accept()
             _optionsModel->add(ui->le_name->text(), ui->cb_training->currentData().toString());
         } else {
             _optionsModel->modify(*_optionUuid, ui->le_name->text(), ui->cb_training->currentData().toString());
+            qDebug() << ui->cb_training->currentData().toString();
         }
         QDialog::accept();
     }

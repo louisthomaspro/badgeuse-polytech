@@ -10,12 +10,10 @@ class Utilities
 {
 public:
     Utilities();
-    static QList<QMap<QString, QVariant>> getCardReaders();
-    static QList<QMap<QString, QVariant>> getOptions(QString trainingUuid);
-    static QList<QMap<QString, QVariant>> getTraining();
+    static QList<QMap<QString, QVariant>> generateQListFromSql(QString &sql);
 
 private:
-    static QList<QMap<QString, QVariant>> generateQListFromSql(QString &sql);
+
 
 };
 

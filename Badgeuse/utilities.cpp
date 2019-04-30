@@ -19,25 +19,5 @@ QList<QMap<QString, QVariant>> Utilities::generateQListFromSql(QString &sql) {
     return array;
 }
 
-QList<QMap<QString, QVariant>> Utilities::getCardReaders() {
-    QString sql = "select "
-                  "cr.uuid, cr.information, cr.ip "
-                  "from badgeuse.cardreaders cr;";
-    return generateQListFromSql(sql);
-}
 
-QList<QMap<QString, QVariant>> Utilities::getOptions(QString trainingUuid) {
-    QString sql = QString("select "
-                  "o.uuid, o.name, o.trainingUuid, t.name as trainingName "
-                  "from badgeuse.toptions o "
-                  "inner join badgeuse.training t on t.uuid = o.trainingUuid "
-                  "where o.trainingUuid = UNHEX('%1');").arg(trainingUuid);
-    return generateQListFromSql(sql);
-}
 
-QList<QMap<QString, QVariant>> Utilities::getTraining() {
-    QString sql = "select "
-                  "t.uuid, t.name "
-                  "from badgeuse.training t;";
-    return generateQListFromSql(sql);
-}

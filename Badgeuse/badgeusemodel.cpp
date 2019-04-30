@@ -55,6 +55,7 @@ PresencesModel* BadgeuseModel::getPresencesModel() { return _presencesModel; }
 StudentsModel* BadgeuseModel::getStudentsModel() { return _studentsModel; }
 OptionsModel* BadgeuseModel::getOptionsModel() { return _optionsModel; }
 TrainingModel* BadgeuseModel::getTrainingModel() { return  _trainingModel; }
+CardReaderModel* BadgeuseModel::getCardReaderModel() { return  _cardReaderModel; }
 
 
 void BadgeuseModel::reload() {

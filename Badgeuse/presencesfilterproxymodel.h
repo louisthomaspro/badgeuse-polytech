@@ -2,6 +2,7 @@
 #define PRESENCESFILTERPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
+#include <QTime>
 #include "presencesmodel.h"
 
 

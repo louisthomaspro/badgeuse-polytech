@@ -26,6 +26,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    cardreadermodel.cpp \
         main.cpp \
         mainwindow.cpp \
     badgeusemodel.cpp \
@@ -42,6 +43,7 @@ SOURCES += \
     utilities.cpp
 
 HEADERS += \
+    cardreadermodel.h \
         mainwindow.h \
     badgeusemodel.h \
     optionsdialog.h \

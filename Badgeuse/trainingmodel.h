@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QSqlRecord>
 #include <QDateTime>
+#include "utilities.h"
 
 class TrainingModel : public QSqlQueryModel
 {
@@ -27,6 +28,7 @@ public:
     void remove(QString uuid);
     void modify(QString uuid, QString name);
     QMap<QString, QVariant> get(QString uuid);
+    QList<QMap<QString, QVariant>> get();
 
 
 protected:

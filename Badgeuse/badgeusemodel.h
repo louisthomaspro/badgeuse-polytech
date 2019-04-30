@@ -10,6 +10,7 @@
 #include "studentsmodel.h"
 #include "optionsmodel.h"
 #include "trainingmodel.h"
+#include "cardreadermodel.h"
 #include <QSettings>
 #include <QApplication>
 
@@ -27,6 +28,7 @@ public:
     StudentsModel *getStudentsModel();
     OptionsModel *getOptionsModel();
     TrainingModel *getTrainingModel();
+    CardReaderModel *getCardReaderModel();
 
     void reload();
 
@@ -39,6 +41,7 @@ private:
     StudentsModel *_studentsModel;
     OptionsModel *_optionsModel;
     TrainingModel *_trainingModel;
+    CardReaderModel *_cardReaderModel;
 
     QSettings *_dbSettings;
 

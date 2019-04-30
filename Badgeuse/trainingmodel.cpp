@@ -50,7 +50,6 @@ void TrainingModel::remove(QString uuid) {
         qDebug() << "SqlError: " << queryTrainingDelete.lastError().text();
         return;
     }
-    reload();
 }
 
 void TrainingModel::modify(QString uuid, QString name) {
@@ -89,5 +88,12 @@ QMap<QString, QVariant> TrainingModel::get(QString uuid) {
     return trainingInfo;
 }
 
+
+QList<QMap<QString, QVariant>> TrainingModel::get() {
+    QString sql = "select "
+                  "t.uuid, t.name "
+                  "from badgeuse.training t;";
+    return Utilities::generateQListFromSql(sql);
+}
 
 

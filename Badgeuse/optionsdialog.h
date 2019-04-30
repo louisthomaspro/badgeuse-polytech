@@ -10,6 +10,7 @@
 #include <QSqlError>
 #include <QListIterator>
 #include "optionsmodel.h"
+#include "trainingmodel.h"
 #include "qchecklist.h"
 #include "ui_optionsdialog.h"
 
@@ -23,7 +24,7 @@ class OptionsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit OptionsDialog(OptionsModel *optionsModel, QWidget *parent = nullptr, QString optionUuid = QString());
+    explicit OptionsDialog(OptionsModel *optionsModel, TrainingModel *trainingModel, QWidget *parent = nullptr, QString optionUuid = QString());
     ~OptionsDialog();
 
 
@@ -35,6 +36,7 @@ private slots:
 private:
     Ui::OptionsDialog *ui;
     OptionsModel *_optionsModel;
+    TrainingModel *_trainingModel;
     QString *_optionUuid;
 };
 

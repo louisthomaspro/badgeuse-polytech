@@ -140,7 +140,7 @@ void MainWindow::initFilters() {
     // Fill pf cardreaders
     ui->cb_pf_cardreader->clear();
     ui->cb_pf_cardreader->addItem("");
-    for (QMap<QString, QVariant> item : Utilities::getCardReaders()) {
+    for (QMap<QString, QVariant> item : _badgeuseModel->getCardReaderModel()->get()) {
         ui->cb_pf_cardreader->addItem(item["information"].toString(), item["uuid"].toByteArray().toHex());
     }
 
@@ -149,7 +149,7 @@ void MainWindow::initFilters() {
     ui->cb_pf_training->addItem("");
     ui->cb_sf_training->clear();
     ui->cb_sf_training->addItem("");
-    for (QMap<QString, QVariant> item : Utilities::getTraining()) {
+    for (QMap<QString, QVariant> item : _badgeuseModel->getTrainingModel()->get()) {
         ui->cb_pf_training->addItem(item["name"].toString(), item["uuid"].toByteArray().toHex());
         ui->cb_sf_training->addItem(item["name"].toString(), item["uuid"].toByteArray().toHex());
     }
@@ -167,7 +167,7 @@ void MainWindow::updatePfOptions() {
     // Fill options
     ui->cb_pf_option->clear();
     ui->cb_pf_option->addItem("");
-    for (QMap<QString, QVariant> item : Utilities::getOptions(ui->cb_pf_training->currentData().toString())) {
+    for (QMap<QString, QVariant> item : _badgeuseModel->getOptionsModel()->getFromTraining(ui->cb_pf_training->currentData().toString())) {
         ui->cb_pf_option->addItem(item["name"].toString(), item["uuid"].toByteArray().toHex());
     }
 }
@@ -176,7 +176,7 @@ void MainWindow::updateSfOptions() {
     // Fill options
     ui->cb_sf_option->clear();
     ui->cb_sf_option->addItem("");
-    for (QMap<QString, QVariant> item : Utilities::getOptions(ui->cb_sf_training->currentData().toString())) {
+    for (QMap<QString, QVariant> item : _badgeuseModel->getOptionsModel()->getFromTraining(ui->cb_sf_training->currentData().toString())) {
         ui->cb_sf_option->addItem(item["name"].toString(), item["uuid"].toByteArray().toHex());
     }
 }
@@ -235,7 +235,7 @@ void MainWindow::openDialog()
     }
     else if (sender() == ui->pb_modifyoption || sender() == ui->pb_addoption || sender() == ui->tv_options)
     {
-        _optionsDialog = new OptionsDialog(_badgeuseModel->getOptionsModel(), this, selectedUuid);
+        _optionsDialog = new OptionsDialog(_badgeuseModel->getOptionsModel(), _badgeuseModel->getTrainingModel(), this, selectedUuid);
         if (_optionsDialog->exec() == QDialog::Accepted) {
             reload();
         }
@@ -330,22 +330,6 @@ void MainWindow::deleteTraining() {
 void MainWindow::deleteOption() {
     QString selectedUuid = getTvSelectedUuid(ui->tv_options);
     if (selectedUuid != nullptr) {
-        QSqlQuery queryCount("select count(*) from badgeuse.students stu where stu.trainingUuid = UNHEX(?);");
-        queryCount.addBindValue(selectedUuid);
-        queryCount.exec();
-        int count;
-        if (queryCount.first()) {
-            count = queryCount.value(0).toInt();
-            if (count > 0) {
-                QString text = QString("Impossible de supprimer cette formation. Il y a %1 étudiant(s) qui y sont rattaché(s).").arg(count);
-                QMessageBox::critical(this, "Impossible", text);
-                return;
-            }
-        } else {
-            qDebug() << "Error queryCount " << queryCount.lastError().text();
-            return;
-        }
-
         QMessageBox msgBox;
         msgBox.setText("La formation selectionnée va être supprimée définitivement.");
         msgBox.setInformativeText("Êtes-vous sûr de vouloir continuer ?");
@@ -353,7 +337,7 @@ void MainWindow::deleteOption() {
         int ret = msgBox.exec();
 
         if (ret == QMessageBox::Yes) {
-            _badgeuseModel->getTrainingModel()->remove(selectedUuid);
+            _badgeuseModel->getOptionsModel()->remove(selectedUuid);
             _badgeuseModel->reload();
             initFilters();
         }
