@@ -13,11 +13,7 @@ QVariant PresencesModel::data(const QModelIndex &index, int role) const
             return value.toByteArray().toHex();
         else if (index.column() == 1)
             return value.toByteArray().toHex(':');
-//        else if (index.column() == 4)
-//            return value.toByteArray().toHex();
     }
-    if (role == Qt::TextColorRole && index.column() == 1)
-        return QVariant::fromValue(QColor(Qt::red));
     return value;
 }
 
@@ -49,16 +45,19 @@ void PresencesModel::initModel()
     setQuery(query);
 }
 
-void PresencesModel::reload() {
+void PresencesModel::reload()
+{
     initModel();
 }
 
-void PresencesModel::setQuery(const QSqlQuery &query) {
+void PresencesModel::setQuery(const QSqlQuery &query)
+{
     QSqlQueryModel::setQuery(query);
 }
 
 
-void PresencesModel::remove(QString uuid) {
+bool PresencesModel::remove(QString uuid)
+{
     QSqlQuery queryPresenceDelete("delete from badgeuse.scans where uuid = UNHEX(?)");
     queryPresenceDelete.addBindValue(uuid);
 
@@ -72,7 +71,7 @@ void PresencesModel::remove(QString uuid) {
 }
 
 
-void PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid) {
+bool PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid) {
     QSqlQuery queryPresenceInsert("insert into badgeuse.scans VALUES("
                                "UNHEX(REPLACE(uuid(),'-','')), (select rfidNumber from students where uuid = UNHEX(?)), FROM_UNIXTIME(?), FROM_UNIXTIME(?), UNHEX(?), UNHEX(?));");
     queryPresenceInsert.addBindValue(studentUuid);
@@ -92,7 +91,7 @@ void PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardRead
 }
 
 
-void PresencesModel::modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid) {
+bool PresencesModel::modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid) {
     QSqlQuery queryStudentModify("update badgeuse.scans set "
                                "rfidNumber = (select rfidNumber from students where uuid = UNHEX(?)),"
                                "dateTimeEntry = FROM_UNIXTIME(?),"

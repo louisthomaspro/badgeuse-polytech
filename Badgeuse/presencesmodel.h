@@ -42,9 +42,9 @@ public:
 
     void initModel();
     void reload();
-    void remove(QString uuid);
-    void add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid);
-    void modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid);
+    bool remove(QString uuid);
+    bool add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid);
+    bool modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid);
     QMap<QString, QVariant> getPresence(QString uuid);
     QList<QMap<QString, QVariant>> getExport(QString studentUuid, QDateTime QDateTimeBegin, QDateTime QDateTimeEnd);
 

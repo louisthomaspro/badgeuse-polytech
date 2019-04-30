@@ -40,11 +40,7 @@ bool OptionsModel::add(QString name, QString trainingUuid)
     insert.addBindValue(trainingUuid);
     insert.addBindValue(name);
 
-    if(!insert.exec()) {
-        qDebug() << "SqlError: " << insert.lastError().text();
-        return false;
-    }
-    return true;
+    return Utilities::exec(insert);
 }
 
 bool OptionsModel::remove(QString uuid)
@@ -52,11 +48,7 @@ bool OptionsModel::remove(QString uuid)
     QSqlQuery remove("delete from badgeuse.toptions where uuid = UNHEX(?)");
     remove.addBindValue(uuid);
 
-    if(!remove.exec()) {
-        qDebug() << "SqlError: " << remove.lastError().text();
-        return false;
-    }
-    return true;
+    return Utilities::exec(remove);
 }
 
 bool OptionsModel::modify(QString uuid, QString name, QString trainingUuid) {
@@ -68,11 +60,7 @@ bool OptionsModel::modify(QString uuid, QString name, QString trainingUuid) {
     modify.addBindValue(name);
     modify.addBindValue(uuid);
 
-    if(!modify.exec()) {
-        qDebug() << "SqlError: " << modify.lastError().text();
-        return false;
-    }
-    return true;
+    return Utilities::exec(modify);
 }
 
 QMap<QString, QVariant> OptionsModel::get(QString uuid)
@@ -82,6 +70,7 @@ QMap<QString, QVariant> OptionsModel::get(QString uuid)
                             "from badgeuse.toptions t "
                             "where t.uuid = UNHEX(?);");
     select.addBindValue(uuid);
+
     return Utilities::generateQListFromSql(select).first();
 }
 
@@ -94,6 +83,7 @@ QList<QMap<QString, QVariant>> OptionsModel::getFromTraining(QString trainingUui
                   "inner join badgeuse.training t on t.uuid = o.trainingUuid "
                   "where o.trainingUuid = UNHEX(?);");
     query.addBindValue(trainingUuid);
+
     return Utilities::generateQListFromSql(query);
 }
 
