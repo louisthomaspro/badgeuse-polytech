@@ -58,7 +58,8 @@ void PresencesModel::setQuery(const QSqlQuery &query)
 
 bool PresencesModel::remove(QString uuid)
 {
-    QSqlQuery remove("delete from badgeuse.scans where uuid = UNHEX(?)");
+    QSqlQuery remove;
+    remove.prepare("delete from badgeuse.scans where uuid = UNHEX(?)");
     remove.addBindValue(uuid);
 
     return Utilities::exec(remove);
@@ -67,7 +68,8 @@ bool PresencesModel::remove(QString uuid)
 
 bool PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid)
 {
-    QSqlQuery insert("insert into badgeuse.scans VALUES("
+    QSqlQuery insert;
+    insert.prepare("insert into badgeuse.scans VALUES("
                                "UNHEX(REPLACE(uuid(),'-','')), (select rfidNumber from students where uuid = UNHEX(?)), FROM_UNIXTIME(?), FROM_UNIXTIME(?), UNHEX(?), UNHEX(?));");
     insert.addBindValue(studentUuid);
     insert.addBindValue(DateTimeEntry);
@@ -81,7 +83,8 @@ bool PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardRead
 
 bool PresencesModel::modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid)
 {
-    QSqlQuery modify("update badgeuse.scans set "
+    QSqlQuery modify;
+    modify.prepare("update badgeuse.scans set "
                                "rfidNumber = (select rfidNumber from students where uuid = UNHEX(?)),"
                                "dateTimeEntry = FROM_UNIXTIME(?),"
                                "dateTimeExit = FROM_UNIXTIME(?),"

@@ -100,6 +100,19 @@ public:
         }
     }
 
+    void setCheckStateByData(const QString &text, const Qt::CheckState checkstate)
+    {
+        int nbRows = m_model->rowCount();
+
+        for (int i = 0; i < nbRows; i++)
+        {
+            if (m_model->item(i)->data().toString().compare(text) == 0)
+            {
+                m_model->item(i)->setCheckState(checkstate);
+            }
+        }
+    }
+
 
     QMap<QString, QVariant> getCheckedItems()
     {
@@ -123,8 +136,8 @@ public:
             }
         }
 
-        list["itemsData"] = itemsData;
-        list["itemsName"] = itemsName;
+        list["itemData"] = itemsData;
+        list["itemName"] = itemsName;
 //        qDebug() << "list: " << list;
         return list;
     }

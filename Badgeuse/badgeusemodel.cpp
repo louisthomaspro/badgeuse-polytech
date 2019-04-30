@@ -7,9 +7,9 @@ BadgeuseModel::BadgeuseModel(QSettings &dbSettings, QObject* parent) : QObject(p
 
     initDbConnection();
     _presencesModel = new PresencesModel(this);
-    _studentsModel = new StudentsModel(this);
-    _trainingModel = new TrainingModel(this);
     _optionsModel = new OptionsModel(this);
+    _studentsModel = new StudentsModel(*_optionsModel, this);
+    _trainingModel = new TrainingModel(this);
     initModels();
 
 

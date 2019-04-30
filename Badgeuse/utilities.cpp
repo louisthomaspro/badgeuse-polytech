@@ -31,4 +31,15 @@ bool Utilities::exec(QSqlQuery &query)
     return true;
 }
 
+QString Utilities::getLastUuid()
+{
+    QSqlQuery select("SELECT @last_uuid");
+    if (select.first()) {
+        return select.value(0).toByteArray().toHex();
+    } else {
+        qDebug() << "No last uuid found...";
+        return QString();
+    }
+}
+
 

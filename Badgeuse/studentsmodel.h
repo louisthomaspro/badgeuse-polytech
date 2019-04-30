@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QSqlRecord>
 #include "utilities.h"
+#include "optionsmodel.h"
 
 class StudentsModel : public QSqlQueryModel
 {
@@ -32,20 +33,23 @@ public:
     };
 
 public:
-    StudentsModel(QObject* parent = nullptr);
+    StudentsModel(OptionsModel &optionsModel, QObject* parent = nullptr);
 
     QVariant data(const QModelIndex &item, int role) const override;
 
     void initModel();
     void reload();
-    void addOptions(QString uuid, QStringList options);
+    bool addOptions(QString uuid, QStringList options);
     void updateOptions(const QString& value);
-    void remove(QString uuid);
-    void add(QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
-    void modify(QString uuid, QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
+    bool remove(QString uuid);
+    bool add(QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
+    bool modify(QString uuid, QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int group, QString rfidNumber, QMap<QString, QVariant> options = QMap<QString, QVariant>());
     QMap<QString, QVariant> getStudent(QString uuid);
     QList<QMap<QString, QVariant>> get();
 
+
+private:
+    OptionsModel *_optionsModel;
 
 protected:
     void setQuery(const QSqlQuery &query);

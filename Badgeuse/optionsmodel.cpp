@@ -35,7 +35,8 @@ void OptionsModel::setQuery(const QSqlQuery &query)
 
 bool OptionsModel::add(QString name, QString trainingUuid)
 {
-    QSqlQuery insert("insert into badgeuse.toptions VALUES("
+    QSqlQuery insert;
+    insert.prepare("insert into badgeuse.toptions VALUES("
                                "UNHEX(REPLACE(uuid(),'-','')), UNHEX(?), ?);");
     insert.addBindValue(trainingUuid);
     insert.addBindValue(name);
@@ -45,14 +46,16 @@ bool OptionsModel::add(QString name, QString trainingUuid)
 
 bool OptionsModel::remove(QString uuid)
 {
-    QSqlQuery remove("delete from badgeuse.toptions where uuid = UNHEX(?)");
+    QSqlQuery remove;
+    remove.prepare("delete from badgeuse.toptions where uuid = UNHEX(?)");
     remove.addBindValue(uuid);
 
     return Utilities::exec(remove);
 }
 
 bool OptionsModel::modify(QString uuid, QString name, QString trainingUuid) {
-    QSqlQuery modify("update badgeuse.toptions set "
+    QSqlQuery modify;
+    modify.prepare("update badgeuse.toptions set "
                                "trainingUuid = UNHEX(?), "
                                "name = ? "
                                "where uuid = UNHEX(?);");
@@ -77,13 +80,26 @@ QMap<QString, QVariant> OptionsModel::get(QString uuid)
 
 QList<QMap<QString, QVariant>> OptionsModel::getFromTraining(QString trainingUuid)
 {
-    QSqlQuery query("select "
+    QSqlQuery select("select "
                   "o.uuid, o.name, o.trainingUuid, t.name as trainingName "
                   "from badgeuse.toptions o "
                   "inner join badgeuse.training t on t.uuid = o.trainingUuid "
                   "where o.trainingUuid = UNHEX(?);");
-    query.addBindValue(trainingUuid);
+    select.addBindValue(trainingUuid);
 
-    return Utilities::generateQListFromSql(query);
+    return Utilities::generateQListFromSql(select);
 }
+
+
+QList<QMap<QString, QVariant>> OptionsModel::getFromStudent(QString studentUuid) {
+    QSqlQuery select("select o.uuid, o.name "
+                                "from badgeuse.toptions o "
+                                "inner join badgeuse.rlToptionsStudents rl on o.uuid = rl.toptionsUuid "
+                                "where rl.studentsUuid = UNHEX(?);");
+    select.addBindValue(studentUuid);
+
+    return Utilities::generateQListFromSql(select);
+}
+
+
 

@@ -29,6 +29,7 @@ public:
     bool modify(QString uuid, QString name, QString trainingUuid);
     QMap<QString, QVariant> get(QString uuid);
     QList<QMap<QString, QVariant>> getFromTraining(QString trainingUuid);
+    QList<QMap<QString, QVariant>> getFromStudent(QString studentUuid);
 
 
 protected:

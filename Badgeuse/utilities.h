@@ -14,6 +14,7 @@ public:
     Utilities();
     static QList<QMap<QString, QVariant>> generateQListFromSql(QSqlQuery &sql);
     static bool exec(QSqlQuery &query);
+    static QString getLastUuid();
 
 private:
 

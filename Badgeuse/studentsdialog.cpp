@@ -68,8 +68,8 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
         ui->cb_rfidNumber->setCurrentIndex(0);
 
         // Check options
-        for(QString s: (studentInfo["options"].toMap()["optionsName"]).toStringList()) {
-            _optionsList->setCheckStateByText(s, Qt::CheckState::Checked);
+        for(QVariant item: (studentInfo["options"].toList())) {
+            _optionsList->setCheckStateByData(item.toMap()["uuid"].toByteArray().toHex(), Qt::CheckState::Checked);
         }
 
     } else {
