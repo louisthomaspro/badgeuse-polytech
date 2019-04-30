@@ -5,10 +5,8 @@ Utilities::Utilities()
 
 }
 
-
 QList<QMap<QString, QVariant>> Utilities::generateQListFromSql(QString &sql) {
     QSqlQuery query(sql);
-
     QList<QMap<QString, QVariant>> array = QList<QMap<QString, QVariant>>();
 
     while (query.next()) {
@@ -18,11 +16,8 @@ QList<QMap<QString, QVariant>> Utilities::generateQListFromSql(QString &sql) {
         }
         array.insert(array.size(), item);
     }
-
     return array;
 }
-
-
 
 QList<QMap<QString, QVariant>> Utilities::getCardReaders() {
     QString sql = "select "

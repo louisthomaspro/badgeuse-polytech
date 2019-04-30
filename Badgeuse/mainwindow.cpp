@@ -36,6 +36,9 @@ MainWindow::MainWindow(QWidget *parent) :
     _studentsFilterProxyModel->setSourceModel(_badgeuseModel->getStudentsModel());
     ui->tv_students->setModel(_studentsFilterProxyModel);
 
+    ui->tv_training->setModel(_badgeuseModel->getTrainingModel());
+    ui->tv_options->setModel(_badgeuseModel->getOptionsModel());
+
 
 
 
@@ -125,6 +128,7 @@ MainWindow::~MainWindow()
 }
 
 
+// Reload models and filters
 void MainWindow::reload() {
     _badgeuseModel->reload();
     initFilters();
@@ -209,7 +213,7 @@ void MainWindow::openDialog()
     {
         _studentsDialog = new StudentsDialog(_badgeuseModel->getStudentsModel(), this, selectedUuid);
         if (_studentsDialog->exec() == QDialog::Accepted) {
-            _badgeuseModel->reload();
+            reload();
         }
         delete _studentsDialog;
     }
@@ -217,7 +221,7 @@ void MainWindow::openDialog()
     {
         _presencesDialog = new PresencesDialog(_badgeuseModel->getPresencesModel(), this, selectedUuid);
         if (_presencesDialog->exec() == QDialog::Accepted) {
-            _badgeuseModel->reload();
+            reload();
         }
         delete _presencesDialog;
     }
@@ -225,7 +229,7 @@ void MainWindow::openDialog()
     {
         _trainingDialog = new TrainingDialog(_badgeuseModel->getTrainingModel(), this, selectedUuid);
         if (_trainingDialog->exec() == QDialog::Accepted) {
-            _badgeuseModel->reload();
+            reload();
         }
         delete _trainingDialog;
     }
@@ -233,7 +237,7 @@ void MainWindow::openDialog()
     {
         _optionsDialog = new OptionsDialog(_badgeuseModel->getOptionsModel(), this, selectedUuid);
         if (_optionsDialog->exec() == QDialog::Accepted) {
-            _badgeuseModel->reload();
+            reload();
         }
         delete _optionsDialog;
     }
@@ -264,6 +268,7 @@ void MainWindow::deleteStudent() {
 
         if (ret == QMessageBox::Yes) {
             _badgeuseModel->getStudentsModel()->remove(selectedUuid);
+            _badgeuseModel->reload();
         }
     }
 }
@@ -280,6 +285,7 @@ void MainWindow::deletePresence() {
 
         if (ret == QMessageBox::Yes) {
             _badgeuseModel->getPresencesModel()->remove(selectedUuid);
+            _badgeuseModel->reload();
         }
     }
 }
@@ -312,6 +318,8 @@ void MainWindow::deleteTraining() {
 
         if (ret == QMessageBox::Yes) {
             _badgeuseModel->getTrainingModel()->remove(selectedUuid);
+            _badgeuseModel->reload();
+            initFilters();
         }
     }
 }
@@ -346,6 +354,8 @@ void MainWindow::deleteOption() {
 
         if (ret == QMessageBox::Yes) {
             _badgeuseModel->getTrainingModel()->remove(selectedUuid);
+            _badgeuseModel->reload();
+            initFilters();
         }
     }
 }

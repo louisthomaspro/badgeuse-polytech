@@ -38,13 +38,6 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
                         "WHERE s.studentUuid IS NULL "
                         "order by s.dateTimeEntry desc, s.DateTimeExit desc;");
 
-    if (queryRfid.size() == 0) {
-        QMessageBox::critical(this, "Attention",
-        "Aucun rfid libre disponible pour créer un nouvel étudiant.",
-        QMessageBox::Ok);
-        close();
-        // non testé
-    }
     while (queryRfid.next()) {
         ui->cb_rfidNumber->addItem(
                     queryRfid.value(0).toByteArray().toHex() + " (Entrée: " + queryRfid.value(1).toDateTime().toString(Qt::LocalDate) + (queryRfid.value(2).isNull() ? "" : (" - Sortie: " + queryRfid.value(2).toDateTime().toString(Qt::LocalDate))) + ")",
@@ -81,6 +74,12 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
 
     } else {
         ui->l_title->setText("Ajout d'un étudiant");
+        if (queryRfid.size() == 0) {
+            QMessageBox::critical(this, "Attention",
+            "Aucun rfid libre disponible pour créer un nouvel étudiant.",
+            QMessageBox::Ok);
+            QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
+        }
     }
 
 }
