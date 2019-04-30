@@ -80,7 +80,8 @@ QMap<QString, QVariant> OptionsModel::get(QString uuid)
 
 QList<QMap<QString, QVariant>> OptionsModel::getFromTraining(QString trainingUuid)
 {
-    QSqlQuery select("select "
+    QSqlQuery select;
+    select.prepare("select "
                   "o.uuid, o.name, o.trainingUuid, t.name as trainingName "
                   "from badgeuse.toptions o "
                   "inner join badgeuse.training t on t.uuid = o.trainingUuid "
@@ -92,7 +93,8 @@ QList<QMap<QString, QVariant>> OptionsModel::getFromTraining(QString trainingUui
 
 
 QList<QMap<QString, QVariant>> OptionsModel::getFromStudent(QString studentUuid) {
-    QSqlQuery select("select o.uuid, o.name "
+    QSqlQuery select;
+    select.prepare("select o.uuid, o.name "
                                 "from badgeuse.toptions o "
                                 "inner join badgeuse.rlToptionsStudents rl on o.uuid = rl.toptionsUuid "
                                 "where rl.studentsUuid = UNHEX(?);");

@@ -12,8 +12,6 @@ QVariant TrainingModel::data(const QModelIndex &index, int role) const
         if (index.column() == 0)
             return value.toByteArray().toHex();
     }
-    if (role == Qt::TextColorRole && index.column() == 1)
-        return QVariant::fromValue(QColor(Qt::red));
     return value;
 }
 
@@ -23,77 +21,66 @@ void TrainingModel::initModel()
     setQuery(query);
 }
 
-void TrainingModel::reload() {
+void TrainingModel::reload()
+{
     initModel();
 }
 
-void TrainingModel::setQuery(const QSqlQuery &query) {
+void TrainingModel::setQuery(const QSqlQuery &query)
+{
     QSqlQueryModel::setQuery(query);
 }
 
-void TrainingModel::add(QString name) {
-    QSqlQuery queryTrainingInsert("insert into badgeuse.training VALUES("
-                               "UNHEX(REPLACE(uuid(),'-','')), ?);");
-    queryTrainingInsert.addBindValue(name);
+bool TrainingModel::add(QString name)
+{
+    QSqlQuery insert;
+    insert.prepare("insert into badgeuse.training VALUES(UNHEX(REPLACE(uuid(),'-','')), ?);");
+    insert.addBindValue(name);
 
-    if(!queryTrainingInsert.exec()) {
-        qDebug() << "SqlError: " << queryTrainingInsert.lastError().text();
-        return;
-    }
+    return Utilities::exec(insert);
 }
 
-void TrainingModel::remove(QString uuid) {
-    QSqlQuery queryTrainingDelete("delete from badgeuse.training where uuid = UNHEX(?)");
-    queryTrainingDelete.addBindValue(uuid);
+bool TrainingModel::remove(QString uuid)
+{
+    QSqlQuery remove;
+    remove.prepare("delete from badgeuse.training where uuid = UNHEX(?)");
+    remove.addBindValue(uuid);
 
-    if(!queryTrainingDelete.exec()) {
-        qDebug() << "SqlError: " << queryTrainingDelete.lastError().text();
-        return;
-    }
+    return Utilities::exec(remove);
 }
 
-void TrainingModel::modify(QString uuid, QString name) {
-    QSqlQuery queryTrainingModify("update badgeuse.training set "
+bool TrainingModel::modify(QString uuid, QString name)
+{
+    QSqlQuery modify;
+    modify.prepare("update badgeuse.training set "
                                "name = ? "
                                "where uuid = UNHEX(?);");
-    queryTrainingModify.addBindValue(name);
-    queryTrainingModify.addBindValue(uuid);
+    modify.addBindValue(name);
+    modify.addBindValue(uuid);
 
-    if(!queryTrainingModify.exec()) {
-        qDebug() << "SqlError: " << queryTrainingModify.lastError().text();
-        return;
-    }
+    return Utilities::exec(modify);
 }
 
-QMap<QString, QVariant> TrainingModel::get(QString uuid) {
-    QSqlQuery queryTraining("select t.uuid, t.name "
+QMap<QString, QVariant> TrainingModel::get(QString uuid)
+{
+    QSqlQuery select;
+    select.prepare("select t.uuid, t.name "
                             "from badgeuse.training t "
                             "where t.uuid = UNHEX(?);");
 
-    queryTraining.addBindValue(uuid);
-    queryTraining.exec();
+    select.addBindValue(uuid);
 
-    QMap<QString, QVariant> trainingInfo;
-
-
-    if (queryTraining.first()) {
-        for (int col = 0; col < queryTraining.record().count(); col++) { // foreach colmns
-            trainingInfo[queryTraining.record().fieldName(col)] = queryTraining.value(col);
-        }
-    } else {
-        qDebug() << "Error queryTraining of uuid " << uuid << ".";
-        return  QMap<QString, QVariant>();
-    }
-
-    return trainingInfo;
+    return Utilities::generateQListFromSql(select).first();
 }
 
 
-QList<QMap<QString, QVariant>> TrainingModel::get() {
-    QSqlQuery query("select "
+QList<QMap<QString, QVariant>> TrainingModel::get()
+{
+    QSqlQuery select;
+    select.prepare("select "
                   "t.uuid, t.name "
                   "from badgeuse.training t;");
-    return Utilities::generateQListFromSql(query);
+    return Utilities::generateQListFromSql(select);
 }
 
 

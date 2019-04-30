@@ -197,7 +197,8 @@ QMap<QString, QVariant> StudentsModel::getStudent(QString uuid)
 
 QList<QMap<QString, QVariant>> StudentsModel::get()
 {
-    QSqlQuery query("select stu.uuid, CONCAT(stu.studentNumber, ' - ', stu.firstname, ' ', stu.lastname) as text from badgeuse.students stu;");
-    return Utilities::generateQListFromSql(query);
+    QSqlQuery select;
+    select.prepare("select stu.uuid, CONCAT(stu.studentNumber, ' - ', stu.firstname, ' ', stu.lastname) as text from badgeuse.students stu;");
+    return Utilities::generateQListFromSql(select);
 
 }
