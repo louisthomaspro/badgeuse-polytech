@@ -6,7 +6,8 @@ CardReaderModel::CardReaderModel()
 }
 
 
-QList<QMap<QString, QVariant>> CardReaderModel::get() {
+QList<QMap<QString, QVariant>> CardReaderModel::get()
+{
     QSqlQuery query;
     query.prepare("select "
                   "cr.uuid, cr.information, cr.ip "
