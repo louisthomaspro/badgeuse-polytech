@@ -65,7 +65,8 @@ bool PresencesModel::remove(QString uuid)
 }
 
 
-bool PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid) {
+bool PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid)
+{
     QSqlQuery insert("insert into badgeuse.scans VALUES("
                                "UNHEX(REPLACE(uuid(),'-','')), (select rfidNumber from students where uuid = UNHEX(?)), FROM_UNIXTIME(?), FROM_UNIXTIME(?), UNHEX(?), UNHEX(?));");
     insert.addBindValue(studentUuid);
@@ -78,7 +79,8 @@ bool PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardRead
 }
 
 
-bool PresencesModel::modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid) {
+bool PresencesModel::modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid)
+{
     QSqlQuery modify("update badgeuse.scans set "
                                "rfidNumber = (select rfidNumber from students where uuid = UNHEX(?)),"
                                "dateTimeEntry = FROM_UNIXTIME(?),"
@@ -99,7 +101,8 @@ bool PresencesModel::modify(QString uuid, uint DateTimeEntry, uint DateTimeExit,
 
 
 
-QMap<QString, QVariant> PresencesModel::getPresence(QString uuid) {
+QMap<QString, QVariant> PresencesModel::getPresence(QString uuid)
+{
     QSqlQuery select;
     select.prepare("select "
                     "s.uuid, "
@@ -118,8 +121,8 @@ QMap<QString, QVariant> PresencesModel::getPresence(QString uuid) {
 }
 
 
-
-QList<QMap<QString, QVariant>> PresencesModel::getExport(QString studentUuid, QDateTime QDateTimeBegin, QDateTime QDateTimeEnd) {
+QList<QMap<QString, QVariant>> PresencesModel::getExport(QString studentUuid, QDateTime QDateTimeBegin, QDateTime QDateTimeEnd)
+{
 
     QTime beginTime(0, 0, 0);
     QTime endTime(23, 59, 59);

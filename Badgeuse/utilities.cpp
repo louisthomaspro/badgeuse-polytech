@@ -24,7 +24,7 @@ QList<QMap<QString, QVariant>> Utilities::generateQListFromSql(QSqlQuery &query)
 
 bool Utilities::exec(QSqlQuery &query)
 {
-    if(query.exec()) {
+    if(!query.exec()) {
         qDebug() << "SqlError: " << query.lastError().text();
         return false;
     }
