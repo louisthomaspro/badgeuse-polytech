@@ -38,7 +38,7 @@ bool BadgeuseModel::initDbConnection()
 
     if (!_db->open())
     {
-        qDebug("Problème de connexion à la base de données");
+        QMessageBox::critical(static_cast<QWidget*>(parent()), "Attention", "Impossible de se connecter à la base de données.\nParamètrez votre connexion dans 'Paramètre > Base de données'.", QMessageBox::Ok);
         return false;
     }
 

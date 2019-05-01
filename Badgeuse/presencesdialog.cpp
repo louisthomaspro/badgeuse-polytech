@@ -41,9 +41,13 @@ PresencesDialog::PresencesDialog(PresencesModel *presenceModel, CardReadersModel
 
         ui->cb_cardReader->setCurrentIndex(ui->cb_cardReader->findData(presenceInfo["cardreaderUuid"].toByteArray().toHex()));
         ui->cb_student->setCurrentIndex(ui->cb_student->findData(presenceInfo["studentUuid"].toByteArray().toHex()));
+        QDateTime entry = QDateTime::fromTime_t(presenceInfo["dateTimeEntry"].toUInt());
+        QDateTime exit = QDateTime::fromTime_t(presenceInfo["dateTimeExit"].toUInt());
+        entry.setTimeSpec(Qt::UTC);
+        exit.setTimeSpec(Qt::UTC);
 
-        ui->dte_entry->setDateTime(QDateTime::fromTime_t(presenceInfo["dateTimeEntry"].toUInt()));
-        ui->dte_exit->setDateTime(QDateTime::fromTime_t(presenceInfo["dateTimeExit"].toUInt()));
+        ui->dte_entry->setDateTime(entry.toLocalTime());
+        ui->dte_exit->setDateTime(exit.toLocalTime());
 
 
     } else {

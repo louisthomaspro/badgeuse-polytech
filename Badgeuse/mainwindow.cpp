@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->de_pf_begindate, SIGNAL(dateTimeChanged(const QDateTime &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setBeginFilter(const QDateTime &)));
     connect(ui->de_pf_enddate, SIGNAL(dateTimeChanged(const QDateTime &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setEndFilter(const QDateTime &)));
     connect(ui->gb_pf_period, SIGNAL(toggled(const bool &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setPeriodFilter(const bool &)));
+    connect(ui->cb_pf_displaynull, SIGNAL(toggled(const bool &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setDisplayNullFilter(const bool &)));
 
     // Student filter
     connect(ui->le_sf_firstname, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setFirstnameFilter(const QString&)));
@@ -415,8 +416,6 @@ void MainWindow::dbSaveAndConnect()
 
      if (_badgeuseModel->initDbConnection()) {
          QMessageBox::information(this, "Succès", "Connexion réussie.", QMessageBox::Ok);
-     } else {
-         QMessageBox::critical(this, "Attention", "Impossible de se connecter à la base de données.", QMessageBox::Ok);
      }
 }
 

@@ -32,11 +32,13 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
 
 
     // Set last alone rfidNumber
-    QSqlQuery queryRfid("SELECT "
-                        "s.rfidNumber, s.dateTimeEntry, s.DateTimeExit "
-                        "FROM badgeuse.scans s "
-                        "WHERE s.studentUuid IS NULL "
-                        "order by s.dateTimeEntry desc, s.DateTimeExit desc;");
+    QSqlQuery queryRfid("with rfidList as ("
+                            "SELECT "
+                            "DISTINCT s.rfidNumber FROM badgeuse.scans s "
+                            "WHERE s.studentUuid IS NULL "
+                            ")"
+                            "select r.rfidNumber, (select s.dateTimeEntry from badgeuse.scans s where s.rfidNumber = r.rfidNumber order by s.dateTimeEntry desc, s.DateTimeExit desc limit 1) as dateTimeEntry "
+                            "from rfidList r;");
 
     while (queryRfid.next()) {
         ui->cb_rfidNumber->addItem(

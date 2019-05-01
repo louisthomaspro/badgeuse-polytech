@@ -36,7 +36,8 @@ bool PresencesFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
     QString lastname = sourceModel()->data(lastnameIndex).toString();
 
     QModelIndex studentNumberIndex = sourceModel()->index(sourceRow, PresencesModel::STUDENTNUMBER, sourceParent);
-    QString studentNumber = sourceModel()->data(studentNumberIndex).toString();
+    int studentNumberInt = sourceModel()->data(studentNumberIndex).toInt();
+    QString studentNumberString = sourceModel()->data(studentNumberIndex).toString();
 
     QModelIndex cardReaderIndex = sourceModel()->index(sourceRow, PresencesModel::CARDREADER, sourceParent);
     QString cardReader = sourceModel()->data(cardReaderIndex).toString();
@@ -61,13 +62,14 @@ bool PresencesFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
 
     return (firstname.contains(_firstnameRegExp)
             && lastname.contains(_lastnameRegExp)
-            && studentNumber.contains(_studentNumberRegExp)
+            && studentNumberString.contains(_studentNumberRegExp)
             && cardReader.contains(_cardReaderRegExp)
             && training.contains(_trainingRegExp)
             && option.contains(_optionRegExp)
             && groupNumber.contains(_groupNumberRegExp)
             && promotion.contains(_promotionRegExp)
             && ((_period) ? (entry >= _beginDate) && (entry <= _endDate) : true)
+            && ((studentNumberInt == 0 && _displayNull) || (studentNumberInt != 0 && !_displayNull))
             );
 }
 
@@ -117,5 +119,9 @@ void PresencesFilterProxyModel::setEndFilter(const QDateTime& regExp) {
 }
 void PresencesFilterProxyModel::setPeriodFilter(const bool& regExp) {
     _period = regExp;
+    invalidateFilter();
+}
+void PresencesFilterProxyModel::setDisplayNullFilter(const bool& regExp) {
+    _displayNull = regExp;
     invalidateFilter();
 }

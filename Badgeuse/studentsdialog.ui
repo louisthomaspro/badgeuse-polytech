@@ -90,7 +90,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="le_lastname"/>
+      <widget class="QLineEdit" name="le_firstname"/>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_2">
@@ -100,7 +100,7 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QLineEdit" name="le_firstname"/>
+      <widget class="QLineEdit" name="le_lastname"/>
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_10">
@@ -216,12 +216,13 @@
  </widget>
  <tabstops>
   <tabstop>le_studentNumber</tabstop>
-  <tabstop>le_lastname</tabstop>
   <tabstop>le_firstname</tabstop>
+  <tabstop>le_lastname</tabstop>
   <tabstop>le_mail</tabstop>
   <tabstop>sb_degreeYear</tabstop>
   <tabstop>cb_trainingName</tabstop>
   <tabstop>sb_group</tabstop>
+  <tabstop>cb_rfidNumber</tabstop>
  </tabstops>
  <resources/>
  <connections>

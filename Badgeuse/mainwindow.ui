@@ -25,7 +25,7 @@
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Précences</string>
+        <string>Présences</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -71,6 +71,9 @@
               <property name="sortingEnabled">
                <bool>true</bool>
               </property>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
              </widget>
             </item>
            </layout>
@@ -188,7 +191,7 @@
                  <item row="7" column="1">
                   <widget class="QComboBox" name="cb_pf_cardreader"/>
                  </item>
-                 <item row="9" column="0" colspan="2">
+                 <item row="10" column="0" colspan="2">
                   <widget class="QGroupBox" name="gb_pf_period">
                    <property name="title">
                     <string>Période</string>
@@ -231,7 +234,7 @@
                    </layout>
                   </widget>
                  </item>
-                 <item row="8" column="1">
+                 <item row="9" column="1">
                   <spacer name="verticalSpacer_6">
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
@@ -246,6 +249,13 @@
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item row="11" column="0" colspan="2">
+                  <widget class="QCheckBox" name="cb_pf_displaynull">
+                   <property name="text">
+                    <string>Afficher les présences non associées</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -467,6 +477,9 @@
               <attribute name="horizontalHeaderStretchLastSection">
                <bool>false</bool>
               </attribute>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
               <attribute name="verticalHeaderCascadingSectionResizes">
                <bool>false</bool>
               </attribute>
@@ -525,6 +538,9 @@
                     <property name="sortingEnabled">
                      <bool>true</bool>
                     </property>
+                    <attribute name="verticalHeaderVisible">
+                     <bool>false</bool>
+                    </attribute>
                    </widget>
                   </item>
                   <item>
@@ -570,6 +586,9 @@
                     <property name="sortingEnabled">
                      <bool>true</bool>
                     </property>
+                    <attribute name="verticalHeaderVisible">
+                     <bool>false</bool>
+                    </attribute>
                    </widget>
                   </item>
                   <item>

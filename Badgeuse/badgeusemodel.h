@@ -15,6 +15,7 @@
 #include <QApplication>
 #include "presencesfilterproxymodel.h"
 #include "studentsfilterproxymodel.h"
+#include <QMessageBox>
 
 class BadgeuseModel : public QObject
 {

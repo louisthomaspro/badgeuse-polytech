@@ -24,6 +24,7 @@ public slots:
     void setBeginFilter(const QDateTime& regExp);
     void setEndFilter(const QDateTime& regExp);
     void setPeriodFilter(const bool& regExp);
+    void setDisplayNullFilter(const bool& regExp);
 
 private:
     QRegExp _firstnameRegExp;
@@ -37,6 +38,7 @@ private:
     QDateTime _beginDate;
     QDateTime _endDate;
     bool _period;
+    bool _displayNull = false;
 };
 
 #endif // PRESENCEFILTERPROXYMODEL_H
