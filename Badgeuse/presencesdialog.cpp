@@ -66,16 +66,16 @@ void PresencesDialog::accept()
     if (validateValues()) {
         if (_presenceUuid->isEmpty()) {
             _presenceModel->add(
-                        ui->dte_entry->dateTime().toTime_t(),
-                        ui->dte_exit->dateTime().toTime_t(),
+                        ui->dte_entry->dateTime(),
+                        ui->dte_exit->dateTime(),
                         ui->cb_cardReader->currentData().toString(),
                         ui->cb_student->currentData().toString()
                         );
         } else {
             _presenceModel->modify(
                         *_presenceUuid,
-                        ui->dte_entry->dateTime().toTime_t(),
-                        ui->dte_exit->dateTime().toTime_t(),
+                        ui->dte_entry->dateTime(),
+                        ui->dte_exit->dateTime(),
                         ui->cb_cardReader->currentData().toString(),
                         ui->cb_student->currentData().toString()
                         );

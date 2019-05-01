@@ -9,10 +9,15 @@ QVariant PresencesModel::data(const QModelIndex &index, int role) const
 {
     QVariant value = QSqlQueryModel::data(index, role);
     if (value.isValid() && role == Qt::DisplayRole) {
-        if (index.column() == 0)
+        if (index.column() == ColumnIndex::UUID)
             return value.toByteArray().toHex();
-        else if (index.column() == 1)
+        else if (index.column() == ColumnIndex::RFIDNUMBER)
             return value.toByteArray().toHex(':');
+        else if (index.column() == ColumnIndex::ENTRY || index.column() == ColumnIndex::EXIT) {
+            QDateTime temp = value.toDateTime();
+            temp.setTimeSpec(Qt::UTC);
+            return temp.toLocalTime();
+        }
     }
     return value;
 }
@@ -66,14 +71,17 @@ bool PresencesModel::remove(QString uuid)
 }
 
 
-bool PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid)
+bool PresencesModel::add(QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid)
 {
+    DateTimeEntry.setTimeSpec(Qt::LocalTime);
+    DateTimeExit.setTimeSpec(Qt::LocalTime);
+
     QSqlQuery insert;
     insert.prepare("insert into badgeuse.scans VALUES("
-                               "UNHEX(REPLACE(uuid(),'-','')), (select rfidNumber from students where uuid = UNHEX(?)), FROM_UNIXTIME(?), FROM_UNIXTIME(?), UNHEX(?), UNHEX(?));");
+                               "UNHEX(REPLACE(uuid(),'-','')), (select rfidNumber from students where uuid = UNHEX(?)), ?, ?, UNHEX(?), UNHEX(?));");
     insert.addBindValue(studentUuid);
-    insert.addBindValue(DateTimeEntry);
-    insert.addBindValue(DateTimeExit);
+    insert.addBindValue(DateTimeEntry.toUTC());
+    insert.addBindValue(DateTimeExit.toUTC());
     insert.addBindValue(cardReaderUuid);
     insert.addBindValue(studentUuid);
 
@@ -81,8 +89,11 @@ bool PresencesModel::add(uint DateTimeEntry, uint DateTimeExit, QString cardRead
 }
 
 
-bool PresencesModel::modify(QString uuid, uint DateTimeEntry, uint DateTimeExit, QString cardReaderUuid, QString studentUuid)
+bool PresencesModel::modify(QString uuid, QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid)
 {
+    DateTimeEntry.setTimeSpec(Qt::LocalTime);
+    DateTimeExit.setTimeSpec(Qt::LocalTime);
+
     QSqlQuery modify;
     modify.prepare("update badgeuse.scans set "
                                "rfidNumber = (select rfidNumber from students where uuid = UNHEX(?)),"
@@ -92,8 +103,8 @@ bool PresencesModel::modify(QString uuid, uint DateTimeEntry, uint DateTimeExit,
                                "studentUuid = UNHEX(?) "
                                "where uuid = UNHEX(?);");
     modify.addBindValue(studentUuid);
-    modify.addBindValue(DateTimeEntry);
-    modify.addBindValue(DateTimeExit);
+    modify.addBindValue(DateTimeEntry.toUTC());
+    modify.addBindValue(DateTimeExit.toUTC());
     modify.addBindValue(cardReaderUuid);
     modify.addBindValue(studentUuid);
     modify.addBindValue(uuid);
