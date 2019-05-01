@@ -13,6 +13,8 @@
 #include "cardreadersmodel.h"
 #include <QSettings>
 #include <QApplication>
+#include "presencesfilterproxymodel.h"
+#include "studentsfilterproxymodel.h"
 
 class BadgeuseModel : public QObject
 {
@@ -30,6 +32,9 @@ public:
     TrainingModel *getTrainingModel();
     CardReadersModel *getCardReaderModel();
 
+    PresencesFilterProxyModel* getFilterProxyPresencesModel();
+    StudentsFilterProxyModel* getFilterProxyStudentsModel();
+
     void reload();
 
 private:
@@ -44,6 +49,9 @@ private:
     CardReadersModel *_cardReaderModel;
 
     QSettings *_dbSettings;
+
+    PresencesFilterProxyModel *_presencesFilterProxyModel;
+    StudentsFilterProxyModel *_studentsFilterProxyModel;
 
 
 };

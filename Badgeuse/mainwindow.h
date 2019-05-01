@@ -14,8 +14,6 @@
 #include "presencesdialog.h"
 #include "trainingdialog.h"
 #include "optionsdialog.h"
-#include "presencesfilterproxymodel.h"
-#include "studentsfilterproxymodel.h"
 #include <QSettings>
 #include <utilities.h>
 #include <QFileDialog>
@@ -66,9 +64,6 @@ private:
     PresencesDialog *_presencesDialog;
     TrainingDialog *_trainingDialog;
     OptionsDialog *_optionsDialog;
-
-    PresencesFilterProxyModel *_presencesFilterProxyModel;
-    StudentsFilterProxyModel *_studentsFilterProxyModel;
 
 
     QSettings *_dbSettings;

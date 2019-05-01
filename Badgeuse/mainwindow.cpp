@@ -27,14 +27,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Init models
     _badgeuseModel = new BadgeuseModel(*_dbSettings, this);
-    _presencesFilterProxyModel = new PresencesFilterProxyModel(this);
-    _studentsFilterProxyModel = new StudentsFilterProxyModel(this);
 
-    _presencesFilterProxyModel->setSourceModel(_badgeuseModel->getPresencesModel());
-    ui->tv_presences->setModel(_presencesFilterProxyModel);
 
-    _studentsFilterProxyModel->setSourceModel(_badgeuseModel->getStudentsModel());
-    ui->tv_students->setModel(_studentsFilterProxyModel);
+
+    ui->tv_presences->setModel(_badgeuseModel->getFilterProxyPresencesModel());
+
+    ui->tv_students->setModel(_badgeuseModel->getFilterProxyStudentsModel());
 
     ui->tv_training->setModel(_badgeuseModel->getTrainingModel());
     ui->tv_options->setModel(_badgeuseModel->getOptionsModel());
@@ -55,28 +53,28 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cb_sf_training, SIGNAL(currentIndexChanged(int)), this, SLOT(updateSfOptions()));
 
     // Presence filter
-    connect(ui->le_pf_firstname, SIGNAL(textChanged(const QString &)), _presencesFilterProxyModel, SLOT(setFirstnameFilter(const QString&)));
-    connect(ui->le_pf_lastname, SIGNAL(textChanged(const QString &)), _presencesFilterProxyModel, SLOT(setLastnameFilter(const QString&)));
-    connect(ui->le_pf_studentnumber, SIGNAL(textChanged(const QString &)), _presencesFilterProxyModel, SLOT(setStudentNumberFilter(const QString&)));
-    connect(ui->cb_pf_cardreader, SIGNAL(currentTextChanged(const QString &)), _presencesFilterProxyModel, SLOT(setCardReaderFilter(const QString&)));
-    connect(ui->cb_pf_training, SIGNAL(currentTextChanged(const QString &)), _presencesFilterProxyModel, SLOT(setTrainingFilter(const QString&)));
-    connect(ui->cb_pf_option, SIGNAL(currentTextChanged(const QString &)), _presencesFilterProxyModel, SLOT(setOptionFilter(const QString&)));
-    connect(ui->le_pf_groupnumber, SIGNAL(textChanged(const QString &)), _presencesFilterProxyModel, SLOT(setGroupNumberFilter(const QString&)));
-    connect(ui->le_pf_promotion, SIGNAL(textChanged(const QString &)), _presencesFilterProxyModel, SLOT(setPromotionFilter(const QString&)));
-    connect(ui->de_pf_begindate, SIGNAL(dateTimeChanged(const QDateTime &)), _presencesFilterProxyModel, SLOT(setBeginFilter(const QDateTime &)));
-    connect(ui->de_pf_enddate, SIGNAL(dateTimeChanged(const QDateTime &)), _presencesFilterProxyModel, SLOT(setEndFilter(const QDateTime &)));
-    connect(ui->gb_pf_period, SIGNAL(toggled(const bool &)), _presencesFilterProxyModel, SLOT(setPeriodFilter(const bool &)));
+    connect(ui->le_pf_firstname, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setFirstnameFilter(const QString&)));
+    connect(ui->le_pf_lastname, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setLastnameFilter(const QString&)));
+    connect(ui->le_pf_studentnumber, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setStudentNumberFilter(const QString&)));
+    connect(ui->cb_pf_cardreader, SIGNAL(currentTextChanged(const QString &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setCardReaderFilter(const QString&)));
+    connect(ui->cb_pf_training, SIGNAL(currentTextChanged(const QString &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setTrainingFilter(const QString&)));
+    connect(ui->cb_pf_option, SIGNAL(currentTextChanged(const QString &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setOptionFilter(const QString&)));
+    connect(ui->le_pf_groupnumber, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setGroupNumberFilter(const QString&)));
+    connect(ui->le_pf_promotion, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setPromotionFilter(const QString&)));
+    connect(ui->de_pf_begindate, SIGNAL(dateTimeChanged(const QDateTime &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setBeginFilter(const QDateTime &)));
+    connect(ui->de_pf_enddate, SIGNAL(dateTimeChanged(const QDateTime &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setEndFilter(const QDateTime &)));
+    connect(ui->gb_pf_period, SIGNAL(toggled(const bool &)), _badgeuseModel->getFilterProxyPresencesModel(), SLOT(setPeriodFilter(const bool &)));
 
     // Student filter
-    connect(ui->le_sf_firstname, SIGNAL(textChanged(const QString &)), _studentsFilterProxyModel, SLOT(setFirstnameFilter(const QString&)));
-    connect(ui->le_sf_lastname, SIGNAL(textChanged(const QString &)), _studentsFilterProxyModel, SLOT(setLastnameFilter(const QString&)));
-    connect(ui->le_sf_studentnumber, SIGNAL(textChanged(const QString &)), _studentsFilterProxyModel, SLOT(setStudentNumberFilter(const QString&)));
-    connect(ui->cb_sf_training, SIGNAL(currentTextChanged(const QString &)), _studentsFilterProxyModel, SLOT(setTrainingFilter(const QString&)));
-    connect(ui->cb_sf_option, SIGNAL(currentTextChanged(const QString &)), _studentsFilterProxyModel, SLOT(setOptionFilter(const QString&)));
-    connect(ui->le_sf_groupnumber, SIGNAL(textChanged(const QString &)), _studentsFilterProxyModel, SLOT(setGroupNumberFilter(const QString&)));
-    connect(ui->le_sf_promotion, SIGNAL(textChanged(const QString &)), _studentsFilterProxyModel, SLOT(setPromotionFilter(const QString&)));
-    connect(ui->le_sf_promotion, SIGNAL(textChanged(const QString &)), _studentsFilterProxyModel, SLOT(setPromotionFilter(const QString&)));
-    connect(ui->le_sf_mail, SIGNAL(textChanged(const QString &)), _studentsFilterProxyModel, SLOT(setMailFilter(const QString&)));
+    connect(ui->le_sf_firstname, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setFirstnameFilter(const QString&)));
+    connect(ui->le_sf_lastname, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setLastnameFilter(const QString&)));
+    connect(ui->le_sf_studentnumber, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setStudentNumberFilter(const QString&)));
+    connect(ui->cb_sf_training, SIGNAL(currentTextChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setTrainingFilter(const QString&)));
+    connect(ui->cb_sf_option, SIGNAL(currentTextChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setOptionFilter(const QString&)));
+    connect(ui->le_sf_groupnumber, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setGroupNumberFilter(const QString&)));
+    connect(ui->le_sf_promotion, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setPromotionFilter(const QString&)));
+    connect(ui->le_sf_promotion, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setPromotionFilter(const QString&)));
+    connect(ui->le_sf_mail, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setMailFilter(const QString&)));
 
 
     // Database parameters

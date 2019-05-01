@@ -8,6 +8,9 @@ BadgeuseModel::BadgeuseModel(QSettings &dbSettings, QObject* parent) : QObject(p
     _db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
     initDbConnection();
 
+    _presencesFilterProxyModel = new PresencesFilterProxyModel(this);
+    _studentsFilterProxyModel = new StudentsFilterProxyModel(this);
+
     _presencesModel = new PresencesModel(this);
     _optionsModel = new OptionsModel(this);
     _studentsModel = new StudentsModel(*_optionsModel, this);
@@ -45,6 +48,10 @@ bool BadgeuseModel::initDbConnection()
 }
 void BadgeuseModel::initModels()
 {
+
+    _presencesFilterProxyModel->setSourceModel(_presencesModel);
+    _studentsFilterProxyModel->setSourceModel(_studentsModel);
+
     _presencesModel->initModel();
     _studentsModel->initModel();
     _optionsModel->initModel();
@@ -53,6 +60,9 @@ void BadgeuseModel::initModels()
 
 PresencesModel* BadgeuseModel::getPresencesModel() { return _presencesModel; }
 StudentsModel* BadgeuseModel::getStudentsModel() { return _studentsModel; }
+PresencesFilterProxyModel* BadgeuseModel::getFilterProxyPresencesModel() { return _presencesFilterProxyModel; }
+StudentsFilterProxyModel* BadgeuseModel::getFilterProxyStudentsModel() { return _studentsFilterProxyModel; }
+
 OptionsModel* BadgeuseModel::getOptionsModel() { return _optionsModel; }
 TrainingModel* BadgeuseModel::getTrainingModel() { return  _trainingModel; }
 CardReadersModel* BadgeuseModel::getCardReaderModel() { return  _cardReaderModel; }
