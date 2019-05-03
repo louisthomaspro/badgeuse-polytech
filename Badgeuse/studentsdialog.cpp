@@ -1,12 +1,15 @@
 #include "studentsdialog.h"
 
-StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QString studentUuid) :
+StudentsDialog::StudentsDialog(StudentsModel *studentModel, TrainingModel *trainingModel, PresencesModel *presencesModel, OptionsModel *optionsModel, QWidget *parent, QString studentUuid) :
     QDialog(parent),
     ui(new Ui::StudentsDialog)
 {
     ui->setupUi(this);
 
     _studentModel = studentModel;
+    _trainingModel = trainingModel;
+    _presencesModel = presencesModel;
+    _optionsModel = optionsModel;
     _studentUuid = &studentUuid;
 
     // init QCheckList for options
@@ -21,10 +24,10 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
     connect(this, SIGNAL(accepted()), this, SLOT(validateValues()));
 
 
-    // Init training combobox
-    QSqlQuery queryTraining("select t.uuid, t.name from badgeuse.training t;");
-    while (queryTraining.next()) {
-        ui->cb_trainingName->addItem(queryTraining.value(1).toString(), queryTraining.value(0).toByteArray().toHex());
+    // Fill training combobox
+    ui->cb_trainingName->clear();
+    for (QMap<QString, QVariant> item : _trainingModel->get()) {
+        ui->cb_trainingName->addItem(item["name"].toString(), item["uuid"].toByteArray().toHex());
     }
 
     // Set default degreeYear
@@ -32,19 +35,9 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
 
 
     // Set last alone rfidNumber
-    QSqlQuery queryRfid("with rfidList as ("
-                            "SELECT "
-                            "DISTINCT s.rfidNumber FROM badgeuse.scans s "
-                            "WHERE s.studentUuid IS NULL "
-                            ")"
-                            "select r.rfidNumber, (select s.dateTimeEntry from badgeuse.scans s where s.rfidNumber = r.rfidNumber order by s.dateTimeEntry desc, s.DateTimeExit desc limit 1) as dateTimeEntry "
-                            "from rfidList r;");
-
-    while (queryRfid.next()) {
-        ui->cb_rfidNumber->addItem(
-                    queryRfid.value(0).toByteArray().toHex() + " (Entrée: " + queryRfid.value(1).toDateTime().toString(Qt::LocalDate) + (queryRfid.value(2).isNull() ? "" : (" - Sortie: " + queryRfid.value(2).toDateTime().toString(Qt::LocalDate))) + ")",
-                    queryRfid.value(0).toByteArray().toHex()
-                    );
+    QList<QMap<QString, QVariant>> aloneRfid = _presencesModel->getLastAloneRfid();
+    for (QMap<QString, QVariant> item : aloneRfid) {
+        ui->cb_rfidNumber->addItem(item["rfidNumber"].toByteArray().toHex(':') + " (Entrée: " + item["dateTimeEntry"].toDateTime().toString(Qt::LocalDate) + ")" , item["rfidNumber"].toByteArray().toHex());
     }
 
 
@@ -76,7 +69,7 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, QWidget *parent, QSt
 
     } else {
         ui->l_title->setText("Ajout d'un étudiant");
-        if (queryRfid.size() == 0) {
+        if (aloneRfid.size() == 0) {
             QMessageBox::critical(this, "Attention",
             "Aucun rfid libre disponible pour créer un nouvel étudiant.",
             QMessageBox::Ok);
@@ -95,16 +88,10 @@ StudentsDialog::~StudentsDialog()
 
 void StudentsDialog::updateOptions(const int& index) {
 
-    // Init training
-    QSqlQuery queryUpdateOptions("select o.uuid, o.name from badgeuse.toptions o "
-                  "inner join badgeuse.training t on o.trainingUuid = t.uuid "
-                  "where t.uuid = UNHEX(?);");
-    queryUpdateOptions.addBindValue(ui->cb_trainingName->itemData(index).toString());
-    queryUpdateOptions.exec();
-
+    // update options combobox
     _optionsList->clear();
-    while (queryUpdateOptions.next()) {
-        _optionsList->addCheckItem(queryUpdateOptions.value(1).toString(), queryUpdateOptions.value(0).toByteArray().toHex(), Qt::CheckState::Unchecked);
+    for (QMap<QString, QVariant> item : _optionsModel->getFromTraining(ui->cb_trainingName->itemData(index).toString())) {
+        _optionsList->addCheckItem(item["name"].toString(), item["uuid"].toByteArray().toHex(), Qt::CheckState::Unchecked);
     }
 
 }

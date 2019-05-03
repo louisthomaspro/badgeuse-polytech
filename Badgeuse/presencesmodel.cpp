@@ -198,3 +198,17 @@ QList<QMap<QString, QVariant>> PresencesModel::getExport(QString studentUuid, QD
     return Utilities::generateQListFromSql(query);
 }
 
+
+QList<QMap<QString, QVariant>> PresencesModel::getLastAloneRfid() {
+    QSqlQuery select;
+    select.prepare("with rfidList as ("
+                            "SELECT "
+                            "DISTINCT s.rfidNumber FROM badgeuse.scans s "
+                            "WHERE s.studentUuid IS NULL "
+                            ")"
+                            "select r.rfidNumber, (select s.dateTimeEntry from badgeuse.scans s where s.rfidNumber = r.rfidNumber order by s.dateTimeEntry desc, s.DateTimeExit desc limit 1) as dateTimeEntry "
+                            "from rfidList r;");
+
+    return Utilities::generateQListFromSql(select);
+}
+

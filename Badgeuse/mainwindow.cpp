@@ -275,7 +275,7 @@ void MainWindow::openDialog()
 
     if (sender() == ui->pb_modifystudent || sender() == ui->pb_addstudent || sender() == ui->tv_students)
     {
-        _studentsDialog = new StudentsDialog(_badgeuseModel->getStudentsModel(), this, selectedUuid);
+        _studentsDialog = new StudentsDialog(_badgeuseModel->getStudentsModel(), _badgeuseModel->getTrainingModel(), _badgeuseModel->getPresencesModel(), _badgeuseModel->getOptionsModel(), this, selectedUuid);
         if (_studentsDialog->exec() == QDialog::Accepted) {
             reload();
         }

@@ -12,6 +12,9 @@
 #include "studentsmodel.h"
 #include "qchecklist.h"
 #include "ui_studentsdialog.h"
+#include "trainingmodel.h"
+#include "presencesmodel.h"
+#include "optionsmodel.h"
 
 
 namespace Ui {
@@ -23,7 +26,7 @@ class StudentsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit StudentsDialog(StudentsModel *studentModel, QWidget *parent = nullptr, QString studentUuid = QString());
+    explicit StudentsDialog(StudentsModel *studentModel, TrainingModel *trainingModel, PresencesModel *presencesModel, OptionsModel *optionsmodel, QWidget *parent = nullptr, QString studentUuid = QString());
     ~StudentsDialog();
 
 
@@ -38,6 +41,9 @@ private:
     QList<QString> _values;
     QCheckList *_optionsList;
     StudentsModel *_studentModel;
+    TrainingModel *_trainingModel;
+    PresencesModel *_presencesModel;
+    OptionsModel *_optionsModel;
     QString *_studentUuid;
 };
 
