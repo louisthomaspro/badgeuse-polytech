@@ -43,7 +43,7 @@ void PresencesModel::initModel()
                     "group by stu.uuid "
                 ")"
                 "select s.uuid, s.rfidNumber as 'Numéro Rfid', s.dateTimeEntry as \"Date d'entrée\", s.dateTimeExit as 'Date de sortie', cr.information as Badgeuse, stu.studentNumber as 'Numéro Étudiant', stu.firstname as Prénom, stu.lastname as Nom, stu.degreeYear as Promotion, stu.training as Formation, stu.groupNumber as Groupe, stu.options as Options "
-                "from badgeuse.scans s "
+                "from badgeuse.presences s "
                 "left join studentsInformation stu on stu.uuid = s.studentUuid "
                 "left join badgeuse.cardreaders cr on cr.uuid = s.cardReaderUuid; "
                 );
@@ -64,7 +64,7 @@ void PresencesModel::setQuery(const QSqlQuery &query)
 bool PresencesModel::remove(QString uuid)
 {
     QSqlQuery remove;
-    remove.prepare("delete from badgeuse.scans where uuid = UNHEX(?)");
+    remove.prepare("delete from badgeuse.presences where uuid = UNHEX(?)");
     remove.addBindValue(uuid);
 
     return Utilities::exec(remove);
@@ -77,7 +77,7 @@ bool PresencesModel::add(QDateTime DateTimeEntry, QDateTime DateTimeExit, QStrin
     DateTimeExit.setTimeSpec(Qt::LocalTime);
 
     QSqlQuery insert;
-    insert.prepare("insert into badgeuse.scans VALUES("
+    insert.prepare("insert into badgeuse.presences VALUES("
                                "UNHEX(REPLACE(uuid(),'-','')), (select rfidNumber from students where uuid = UNHEX(?)), ?, ?, UNHEX(?), UNHEX(?));");
     insert.addBindValue(studentUuid);
     insert.addBindValue(DateTimeEntry.toUTC());
@@ -95,7 +95,7 @@ bool PresencesModel::modify(QString uuid, QDateTime DateTimeEntry, QDateTime Dat
     DateTimeExit.setTimeSpec(Qt::LocalTime);
 
     QSqlQuery modify;
-    modify.prepare("update badgeuse.scans set "
+    modify.prepare("update badgeuse.presences set "
                                "rfidNumber = (select rfidNumber from students where uuid = UNHEX(?)),"
                                "dateTimeEntry = FROM_UNIXTIME(?),"
                                "dateTimeExit = FROM_UNIXTIME(?),"
@@ -125,7 +125,7 @@ QMap<QString, QVariant> PresencesModel::getPresence(QString uuid)
                     "UNIX_TIMESTAMP(s.dateTimeExit) as dateTimeExit, "
                     "s.studentUuid, "
                     "s.cardreaderUuid "
-                    "from badgeuse.scans s "
+                    "from badgeuse.presences s "
                     "left join badgeuse.cardreaders cr on cr.uuid = s.cardreaderUuid "
                   "where s.uuid = UNHEX(?);");
 
@@ -174,7 +174,7 @@ QList<QMap<QString, QVariant>> PresencesModel::getExport(QString studentUuid, QD
         "stu.training as Formation, "
         "stu.groupNumber as Groupe, "
         "stu.options as 'Options' "
-        "from badgeuse.scans s "
+        "from badgeuse.presences s "
         "left join studentsInformation stu on stu.uuid = s.studentUuid "
         "left join badgeuse.cardreaders cr on cr.uuid = s.cardReaderUuid "
         "where 1=1 ");
@@ -203,10 +203,10 @@ QList<QMap<QString, QVariant>> PresencesModel::getLastAloneRfid() {
     QSqlQuery select;
     select.prepare("with rfidList as ("
                             "SELECT "
-                            "DISTINCT s.rfidNumber FROM badgeuse.scans s "
+                            "DISTINCT s.rfidNumber FROM badgeuse.presences s "
                             "WHERE s.studentUuid IS NULL "
                             ")"
-                            "select r.rfidNumber, (select s.dateTimeEntry from badgeuse.scans s where s.rfidNumber = r.rfidNumber order by s.dateTimeEntry desc, s.DateTimeExit desc limit 1) as dateTimeEntry "
+                            "select r.rfidNumber, (select s.dateTimeEntry from badgeuse.presences s where s.rfidNumber = r.rfidNumber order by s.dateTimeEntry desc, s.DateTimeExit desc limit 1) as dateTimeEntry "
                             "from rfidList r;");
 
     return Utilities::generateQListFromSql(select);

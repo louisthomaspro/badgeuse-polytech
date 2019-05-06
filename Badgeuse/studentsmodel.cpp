@@ -51,7 +51,7 @@ void StudentsModel::setQuery(const QSqlQuery &query)
 bool StudentsModel::remove(QString uuid)
 {
     // Delete cascade on toptions table : delete relations
-    // Delete cascade on scans table : update cascade, set NULL
+    // Delete cascade on presences table : update cascade, set NULL
     QSqlQuery remove;
     remove.prepare("delete from badgeuse.students where uuid = UNHEX(?)");
     remove.addBindValue(uuid);
@@ -82,7 +82,7 @@ bool StudentsModel::add(QString studentNumber, QString firstname, QString lastna
 
     // Associate presences with the student
     QSqlQuery updatePresences;
-    updatePresences.prepare("update badgeuse.scans set studentUuid = UNHEX(?) where rfidNumber = UNHEX(?)");
+    updatePresences.prepare("update badgeuse.presences set studentUuid = UNHEX(?) where rfidNumber = UNHEX(?)");
     updatePresences.addBindValue(lastUuid);
     updatePresences.addBindValue(rfidNumber);
 
@@ -144,14 +144,14 @@ bool StudentsModel::modify(QString uuid, QString studentNumber, QString firstnam
 
 
     // Update presence studentUuid
-    QSqlQuery updateScans;
-    updateScans.prepare("update badgeuse.scans set "
+    QSqlQuery updatePresences;
+    updatePresences.prepare("update badgeuse.presences set "
                                           "studentUuid = UNHEX(?) "
                                             "where rfidNumber = UNHEX(?);");
-    updateScans.addBindValue(uuid);
-    updateScans.addBindValue(rfidNumber);
+    updatePresences.addBindValue(uuid);
+    updatePresences.addBindValue(rfidNumber);
 
-    if(!Utilities::exec(updateScans)) return false;
+    if(!Utilities::exec(updatePresences)) return false;
 
     return addOptions(uuid, options["itemData"].toStringList());
 
