@@ -8,3 +8,9 @@ build-Badgeuse-Desktop_Qt_5_11_2_GCC_64bit-Debug/
 *.o
 
 Badgeuse/release/
+
+Badgeuse/Makefile
+
+Badgeuse/Makefile\.Debug
+
+Badgeuse/Makefile\.Release
