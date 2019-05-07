@@ -9,7 +9,7 @@ QT       += core gui sql widgets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Badgeuse
-QTPLUGIN = QSQLMYSQL
+#QTPLUGIN = QSQLMYSQL
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
