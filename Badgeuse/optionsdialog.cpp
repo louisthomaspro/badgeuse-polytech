@@ -26,6 +26,7 @@ OptionsDialog::OptionsDialog(OptionsModel *optionsModel, TrainingModel *training
         QMap<QString, QVariant> info = _optionsModel->get(*_optionUuid);
         ui->le_name->setText(info["name"].toString());
         ui->cb_training->setCurrentIndex(ui->cb_training->findData(info["trainingUuid"].toByteArray().toHex()));
+        ui->cb_training->setDisabled(true);
     } else {
         ui->l_title->setText("Ajout d'une option");
     }
@@ -46,7 +47,7 @@ void OptionsDialog::accept()
         if (_optionUuid->isEmpty()) {
             _optionsModel->add(ui->le_name->text(), ui->cb_training->currentData().toString());
         } else {
-            _optionsModel->modify(*_optionUuid, ui->le_name->text(), ui->cb_training->currentData().toString());
+            _optionsModel->modify(*_optionUuid, ui->le_name->text());
         }
         QDialog::accept();
     }

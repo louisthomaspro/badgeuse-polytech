@@ -53,13 +53,11 @@ bool OptionsModel::remove(QString uuid)
     return Utilities::exec(remove);
 }
 
-bool OptionsModel::modify(QString uuid, QString name, QString trainingUuid) {
+bool OptionsModel::modify(QString uuid, QString name) {
     QSqlQuery modify;
     modify.prepare("update badgeuse.toptions set "
-                               "trainingUuid = UNHEX(?), "
                                "name = ? "
                                "where uuid = UNHEX(?);");
-    modify.addBindValue(trainingUuid);
     modify.addBindValue(name);
     modify.addBindValue(uuid);
 

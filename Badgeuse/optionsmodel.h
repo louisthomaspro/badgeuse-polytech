@@ -26,7 +26,7 @@ public:
     void reload();
     bool add(QString name, QString trainingUuid);
     bool remove(QString uuid);
-    bool modify(QString uuid, QString name, QString trainingUuid);
+    bool modify(QString uuid, QString name);
     QMap<QString, QVariant> get(QString uuid);
     QList<QMap<QString, QVariant>> getFromTraining(QString trainingUuid);
     QList<QMap<QString, QVariant>> getFromStudent(QString studentUuid);
