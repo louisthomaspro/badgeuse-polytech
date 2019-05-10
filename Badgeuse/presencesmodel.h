@@ -43,8 +43,8 @@ public:
     void initModel();
     void reload();
     bool remove(QString uuid);
-    bool add(QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid);
-    bool modify(QString uuid, QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid);
+    bool add(QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid, bool exitIsNull);
+    bool modify(QString uuid, QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid, bool exitIsNull);
     QMap<QString, QVariant> getPresence(QString uuid);
     QList<QMap<QString, QVariant>> getExport(QString studentUuid, QDateTime QDateTimeBegin, QDateTime QDateTimeEnd);
     QList<QMap<QString, QVariant>> getLastAloneRfid();

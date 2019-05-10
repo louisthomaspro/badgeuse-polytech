@@ -28,8 +28,8 @@ PresencesDialog::PresencesDialog(PresencesModel *presenceModel, CardReadersModel
     }
 
     // Init dateTime
-    ui->dte_entry->setDate(QDate::currentDate());
-    ui->dte_exit->setDate(QDate::currentDate());
+    ui->dte_entry->setDateTime(QDateTime::currentDateTime());
+    ui->dte_exit->setDateTime(QDateTime::currentDateTime());
 
 
 
@@ -41,13 +41,18 @@ PresencesDialog::PresencesDialog(PresencesModel *presenceModel, CardReadersModel
 
         ui->cb_cardReader->setCurrentIndex(ui->cb_cardReader->findData(presenceInfo["cardreaderUuid"].toByteArray().toHex()));
         ui->cb_student->setCurrentIndex(ui->cb_student->findData(presenceInfo["studentUuid"].toByteArray().toHex()));
-        QDateTime entry = QDateTime::fromTime_t(presenceInfo["dateTimeEntry"].toUInt());
-        QDateTime exit = QDateTime::fromTime_t(presenceInfo["dateTimeExit"].toUInt());
-        entry.setTimeSpec(Qt::UTC);
-        exit.setTimeSpec(Qt::UTC);
 
+        if (presenceInfo["dateTimeExit"].toUInt() == 0) {
+            ui->gb_enableexit->setChecked(false);
+        } else {
+            QDateTime exit = QDateTime::fromTime_t(presenceInfo["dateTimeExit"].toUInt());
+            exit.setTimeSpec(Qt::UTC);
+            ui->dte_exit->setDateTime(exit.toLocalTime());
+        }
+        QDateTime entry = QDateTime::fromTime_t(presenceInfo["dateTimeEntry"].toUInt());
+        entry.setTimeSpec(Qt::UTC);
         ui->dte_entry->setDateTime(entry.toLocalTime());
-        ui->dte_exit->setDateTime(exit.toLocalTime());
+
 
 
     } else {
@@ -73,7 +78,8 @@ void PresencesDialog::accept()
                         ui->dte_entry->dateTime(),
                         ui->dte_exit->dateTime(),
                         ui->cb_cardReader->currentData().toString(),
-                        ui->cb_student->currentData().toString()
+                        ui->cb_student->currentData().toString(),
+                        !ui->gb_enableexit->isChecked()
                         );
         } else {
             _presenceModel->modify(
@@ -81,7 +87,8 @@ void PresencesDialog::accept()
                         ui->dte_entry->dateTime(),
                         ui->dte_exit->dateTime(),
                         ui->cb_cardReader->currentData().toString(),
-                        ui->cb_student->currentData().toString()
+                        ui->cb_student->currentData().toString(),
+                        !ui->gb_enableexit->isChecked()
                         );
         }
         QDialog::accept();
@@ -93,8 +100,10 @@ bool PresencesDialog::validateValues()
 {
     QString error = QString();
 
-    if (ui->dte_entry->dateTime().toTime_t() >= ui->dte_exit->dateTime().toTime_t()) {
-        error += "\n - La date de sortie doit être supérieur à la date d'entrée.";
+    if (ui->gb_enableexit->isChecked()) {
+        if (ui->dte_entry->dateTime().toTime_t() >= ui->dte_exit->dateTime().toTime_t()) {
+            error += "\n - La date de sortie doit être supérieur à la date d'entrée.";
+        }
     }
 
     if (error.length()>0) {

@@ -71,7 +71,7 @@ bool PresencesModel::remove(QString uuid)
 }
 
 
-bool PresencesModel::add(QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid)
+bool PresencesModel::add(QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid, bool exitIsNull)
 {
     DateTimeEntry.setTimeSpec(Qt::LocalTime);
     DateTimeExit.setTimeSpec(Qt::LocalTime);
@@ -81,7 +81,7 @@ bool PresencesModel::add(QDateTime DateTimeEntry, QDateTime DateTimeExit, QStrin
                                "UNHEX(REPLACE(uuid(),'-','')), (select rfidNumber from students where uuid = UNHEX(?)), ?, ?, UNHEX(?), UNHEX(?));");
     insert.addBindValue(studentUuid);
     insert.addBindValue(DateTimeEntry.toUTC());
-    insert.addBindValue(DateTimeExit.toUTC());
+    insert.addBindValue(exitIsNull ? QVariant(QVariant::DateTime) : DateTimeExit.toUTC());
     insert.addBindValue(cardReaderUuid);
     insert.addBindValue(studentUuid);
 
@@ -89,7 +89,7 @@ bool PresencesModel::add(QDateTime DateTimeEntry, QDateTime DateTimeExit, QStrin
 }
 
 
-bool PresencesModel::modify(QString uuid, QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid)
+bool PresencesModel::modify(QString uuid, QDateTime DateTimeEntry, QDateTime DateTimeExit, QString cardReaderUuid, QString studentUuid, bool exitIsNull)
 {
     DateTimeEntry.setTimeSpec(Qt::LocalTime);
     DateTimeExit.setTimeSpec(Qt::LocalTime);
@@ -97,14 +97,14 @@ bool PresencesModel::modify(QString uuid, QDateTime DateTimeEntry, QDateTime Dat
     QSqlQuery modify;
     modify.prepare("update badgeuse.presences set "
                                "rfidNumber = (select rfidNumber from students where uuid = UNHEX(?)),"
-                               "dateTimeEntry = FROM_UNIXTIME(?),"
-                               "dateTimeExit = FROM_UNIXTIME(?),"
+                               "dateTimeEntry = ?,"
+                               "dateTimeExit = ?,"
                                "cardReaderUuid = UNHEX(?),"
                                "studentUuid = UNHEX(?) "
                                "where uuid = UNHEX(?);");
     modify.addBindValue(studentUuid);
     modify.addBindValue(DateTimeEntry.toUTC());
-    modify.addBindValue(DateTimeExit.toUTC());
+    modify.addBindValue(exitIsNull ? QVariant(QVariant::DateTime) : DateTimeExit.toUTC());
     modify.addBindValue(cardReaderUuid);
     modify.addBindValue(studentUuid);
     modify.addBindValue(uuid);

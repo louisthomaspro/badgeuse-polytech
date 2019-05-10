@@ -14,3 +14,7 @@ Badgeuse/Makefile
 Badgeuse/Makefile\.Debug
 
 Badgeuse/Makefile\.Release
+
+Badgeuse/moc_*
+
+\.directory

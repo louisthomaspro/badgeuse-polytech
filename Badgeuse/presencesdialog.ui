@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>364</width>
-    <height>229</height>
+    <height>271</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -76,20 +76,6 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Date de sortie</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QDateTimeEdit" name="dte_exit">
-       <property name="calendarPopup">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
@@ -109,6 +95,32 @@
      </item>
      <item row="3" column="1">
       <widget class="QComboBox" name="cb_student"/>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QGroupBox" name="gb_enableexit">
+       <property name="title">
+        <string>Ajouter une date de sortie</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <layout class="QFormLayout" name="formLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Date de sortie</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QDateTimeEdit" name="dte_exit">
+          <property name="calendarPopup">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
