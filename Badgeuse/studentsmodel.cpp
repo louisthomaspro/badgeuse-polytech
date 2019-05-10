@@ -50,13 +50,19 @@ void StudentsModel::setQuery(const QSqlQuery &query)
 
 bool StudentsModel::remove(QString uuid)
 {
+    QSqlQuery removeEmptyRfidPresence;
+    removeEmptyRfidPresence.prepare("delete from badgeuse.presences where studentUuid = UNHEX(?) and rfidNumber is NULL");
+    removeEmptyRfidPresence.addBindValue(uuid);
+
+    if (!Utilities::exec(removeEmptyRfidPresence)) return false;
+
     // Delete cascade on toptions table : delete relations
     // Delete cascade on presences table : update cascade, set NULL
-    QSqlQuery remove;
-    remove.prepare("delete from badgeuse.students where uuid = UNHEX(?)");
-    remove.addBindValue(uuid);
+    QSqlQuery removeStudent;
+    removeStudent.prepare("delete from badgeuse.students where uuid = UNHEX(?)");
+    removeStudent.addBindValue(uuid);
 
-    return Utilities::exec(remove);
+    return Utilities::exec(removeStudent);
 }
 
 bool StudentsModel::add(QString studentNumber, QString firstname, QString lastname, QString mail, int degreeYear, QString trainingUuid, int groupNumber, QString rfidNumber, QMap<QString, QVariant> options)

@@ -55,12 +55,17 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, TrainingModel *train
         ui->cb_trainingName->setCurrentText(studentInfo["trainingName"].toString());
         ui->sb_group->setValue(studentInfo["group"].toInt());
 
-        ui->cb_rfidNumber->insertItem(
-                    0,
-                    studentInfo["rfidNumber"].toByteArray().toHex() + " (rfid actuel)",
-                    studentInfo["rfidNumber"].toByteArray().toHex()
-                    );
-        ui->cb_rfidNumber->setCurrentIndex(0);
+        if (studentInfo["rfidNumber"].toByteArray().toHex().isEmpty()) {
+            ui->cb_rfidNumber->insertItem(0, "");
+            ui->cb_rfidNumber->setCurrentIndex(0);
+        } else {
+            ui->cb_rfidNumber->insertItem(
+                        0,
+                        studentInfo["rfidNumber"].toByteArray().toHex() + "(rfid actuel)",
+                        studentInfo["rfidNumber"].toByteArray().toHex()
+                        );
+            ui->cb_rfidNumber->setCurrentIndex(0);
+        }
 
         // Check options
         for(QVariant item: (studentInfo["options"].toList())) {
@@ -69,6 +74,8 @@ StudentsDialog::StudentsDialog(StudentsModel *studentModel, TrainingModel *train
 
     } else {
         ui->l_title->setText("Ajout d'un étudiant");
+        ui->cb_rfidNumber->insertItem(0, "");
+        ui->cb_rfidNumber->setCurrentIndex(0);
         if (aloneRfid.size() == 0) {
             QMessageBox::critical(this, "Attention",
             "Aucun rfid libre disponible pour créer un nouvel étudiant.",

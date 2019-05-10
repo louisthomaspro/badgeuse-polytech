@@ -327,21 +327,24 @@ void MainWindow::deleteStudent()
     QString selectedUuid = getTvSelectedUuid(ui->tv_students);
     if (selectedUuid != nullptr) {
         QMessageBox msgBox;
-        msgBox.setText("L'étudiant selectionné va être supprimé définitivement. Ses badgeages lié à sa carte étudiant vont être dissociés (mais pas supprimés).");
+        msgBox.setText("L'étudiant selectionné va être supprimé définitivement.\n"
+                       "Ses badgeages lié à sa carte étudiant vont être dissociés (mais pas supprimés).\n"
+                       "En revanche, les badgeages sans carte seront supprimés.");
         msgBox.setInformativeText("Êtes-vous sûr de vouloir continuer ?");
         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);
         int ret = msgBox.exec();
 
         if (ret == QMessageBox::Yes) {
-            QMessageBox msgBox2;
-            msgBox.setText("Êtes-vous vraiment sûr de vouloir supprimer l'étudiant selectionné va être supprimé définitivement. Ses badgeages lié à sa carte étudiant vont être dissociés (mais pas supprimés).");
+            msgBox.setText("Êtes-vous vraiment sûr de vouloir supprimer l'étudiant selectionné ? Celui-ci va être supprimé définitivement.\n"
+                           "Ses badgeages lié à sa carte étudiant vont être dissociés (mais pas supprimés).\n"
+                           "En revanche, les badgeages sans carte seront supprimés.");
             msgBox.setInformativeText("Êtes-vous sûr de vouloir continuer ?");
             msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
             msgBox.setDefaultButton(QMessageBox::No);
-            int ret2 = msgBox.exec();
+            ret= msgBox.exec();
 
-            if (ret2 == QMessageBox::Yes) {
+            if (ret == QMessageBox::Yes) {
                 _badgeuseModel->getStudentsModel()->remove(selectedUuid);
                 _badgeuseModel->reload();
             }
