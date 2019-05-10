@@ -35,6 +35,7 @@ bool BadgeuseModel::initDbConnection()
     _db->setPassword(password);
     _db->setPort(port);
     _db->setConnectOptions("MYSQL_OPT_CONNECT_TIMEOUT=4");
+    _db->setConnectOptions("MYSQL_OPT_RECONNECT");
 
     if (!_db->open())
     {
