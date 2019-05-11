@@ -95,7 +95,7 @@
                <x>0</x>
                <y>0</y>
                <width>313</width>
-               <height>571</height>
+               <height>593</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -305,7 +305,7 @@
                <x>0</x>
                <y>0</y>
                <width>313</width>
-               <height>571</height>
+               <height>593</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -888,7 +888,6 @@ Sélectionner le fichier excel (.csv) contenant tous les étudiants de l'année 
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

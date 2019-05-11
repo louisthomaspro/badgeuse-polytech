@@ -17,6 +17,16 @@ class OptionsModel : public QSqlQueryModel
     Q_OBJECT
 
 
+
+public:
+    enum ColumnIndex
+    {
+        UUID = 0,
+        TRAINING = 1,
+        OPTION = 2
+    };
+
+
 public:
     OptionsModel(QObject* parent = nullptr);
 

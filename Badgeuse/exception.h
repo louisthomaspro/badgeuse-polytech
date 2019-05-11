@@ -3,6 +3,7 @@
 
 #include <QException>
 
+// Unused function for the moment
 
 class Exception : public QException
 {

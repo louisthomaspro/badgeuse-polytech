@@ -9,11 +9,11 @@ QVariant PresencesModel::data(const QModelIndex &index, int role) const
 {
     QVariant value = QSqlQueryModel::data(index, role);
     if (value.isValid() && role == Qt::DisplayRole) {
-        if (index.column() == ColumnIndex::UUID)
+        if (index.column() == UUID)
             return value.toByteArray().toHex();
-        else if (index.column() == ColumnIndex::RFIDNUMBER)
+        else if (index.column() == RFIDNUMBER)
             return value.toByteArray().toHex(':');
-        else if (index.column() == ColumnIndex::ENTRY || index.column() == ColumnIndex::EXIT) {
+        else if (index.column() == ENTRY || index.column() == EXIT) {
             QDateTime temp = value.toDateTime();
             temp.setTimeSpec(Qt::UTC);
             return temp.toLocalTime();

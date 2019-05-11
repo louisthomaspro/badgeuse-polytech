@@ -9,7 +9,7 @@ QVariant OptionsModel::data(const QModelIndex &index, int role) const
 {
     QVariant value = QSqlQueryModel::data(index, role);
     if (value.isValid() && role == Qt::DisplayRole) {
-        if (index.column() == 0)
+        if (index.column() == UUID)
             return value.toByteArray().toHex();
     }
     return value;
@@ -17,7 +17,7 @@ QVariant OptionsModel::data(const QModelIndex &index, int role) const
 
 void OptionsModel::initModel()
 {
-    QSqlQuery query("select o.uuid, CONCAT(t.name, \" > \", o.name) as Options from badgeuse.training t "
+    QSqlQuery query("select o.uuid, t.name as 'Formation Parent', o.name as Options from badgeuse.training t "
                     "inner join badgeuse.toptions o on o.trainingUuid = t.uuid;");
     setQuery(query);
 }

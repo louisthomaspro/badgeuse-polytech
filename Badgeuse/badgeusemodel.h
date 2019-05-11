@@ -27,14 +27,15 @@ public:
     BadgeuseModel(QSettings &dbSettings, QObject* parent = nullptr);
     bool initDbConnection();
     void initModels();
+
+    PresencesFilterProxyModel* getFilterProxyPresencesModel();
+    StudentsFilterProxyModel* getFilterProxyStudentsModel();
+
     PresencesModel *getPresencesModel();
     StudentsModel *getStudentsModel();
     OptionsModel *getOptionsModel();
     TrainingModel *getTrainingModel();
     CardReadersModel *getCardReaderModel();
-
-    PresencesFilterProxyModel* getFilterProxyPresencesModel();
-    StudentsFilterProxyModel* getFilterProxyStudentsModel();
 
     void reload();
 

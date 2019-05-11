@@ -9,9 +9,9 @@ QVariant StudentsModel::data(const QModelIndex &index, int role) const
 {
     QVariant value = QSqlQueryModel::data(index, role);
     if (value.isValid() && role == Qt::DisplayRole) {
-        if (index.column() == 0)
+        if (index.column() == STUDENTNUMBER)
             return value.toByteArray().toHex();
-        else if (index.column() == 1)
+        else if (index.column() == RFIDNUMBER)
             return value.toByteArray().toHex(':');
     }
     return value;

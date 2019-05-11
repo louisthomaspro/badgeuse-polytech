@@ -18,6 +18,14 @@ class TrainingModel : public QSqlQueryModel
 
 
 public:
+    enum ColumnIndex
+    {
+        UUID = 0,
+        TRAINING = 1
+    };
+
+
+public:
     TrainingModel(QObject* parent = nullptr);
 
     QVariant data(const QModelIndex &item, int role) const override;

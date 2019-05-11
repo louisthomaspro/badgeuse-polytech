@@ -3,9 +3,9 @@
 BadgeuseModel::BadgeuseModel(QSettings &dbSettings, QObject* parent) : QObject(parent)
 {
 
-    _dbSettings = &dbSettings;
+    _dbSettings = &dbSettings; // retrieve settings information
 
-    _db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
+    _db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL")); // Init database object here to not have "duplicate connection name"
     initDbConnection();
 
     _presencesFilterProxyModel = new PresencesFilterProxyModel(this);
@@ -23,6 +23,7 @@ BadgeuseModel::BadgeuseModel(QSettings &dbSettings, QObject* parent) : QObject(p
 bool BadgeuseModel::initDbConnection()
 {
 
+    // Retrieve information stored in QSettings
     QString host = _dbSettings->value("db_host", "").toString();
     int port = _dbSettings->value("db_port", "").toInt();
     QString dbname = _dbSettings->value("db_dbname", "").toString();
@@ -47,9 +48,9 @@ bool BadgeuseModel::initDbConnection()
 
 
 }
+
 void BadgeuseModel::initModels()
 {
-
     _presencesFilterProxyModel->setSourceModel(_presencesModel);
     _studentsFilterProxyModel->setSourceModel(_studentsModel);
 
@@ -59,17 +60,40 @@ void BadgeuseModel::initModels()
     _trainingModel->initModel();
 }
 
-PresencesModel* BadgeuseModel::getPresencesModel() { return _presencesModel; }
-StudentsModel* BadgeuseModel::getStudentsModel() { return _studentsModel; }
-PresencesFilterProxyModel* BadgeuseModel::getFilterProxyPresencesModel() { return _presencesFilterProxyModel; }
-StudentsFilterProxyModel* BadgeuseModel::getFilterProxyStudentsModel() { return _studentsFilterProxyModel; }
 
-OptionsModel* BadgeuseModel::getOptionsModel() { return _optionsModel; }
-TrainingModel* BadgeuseModel::getTrainingModel() { return  _trainingModel; }
-CardReadersModel* BadgeuseModel::getCardReaderModel() { return  _cardReaderModel; }
+PresencesFilterProxyModel* BadgeuseModel::getFilterProxyPresencesModel()
+{
+    return _presencesFilterProxyModel;
+}
+StudentsFilterProxyModel* BadgeuseModel::getFilterProxyStudentsModel()
+{
+    return _studentsFilterProxyModel;
+}
 
 
-void BadgeuseModel::reload() {
+PresencesModel* BadgeuseModel::getPresencesModel()
+{
+    return _presencesModel;
+}
+StudentsModel* BadgeuseModel::getStudentsModel() {
+    return _studentsModel;
+}
+OptionsModel* BadgeuseModel::getOptionsModel()
+{
+    return _optionsModel;
+}
+TrainingModel* BadgeuseModel::getTrainingModel()
+{
+    return  _trainingModel;
+}
+CardReadersModel* BadgeuseModel::getCardReaderModel()
+{
+    return  _cardReaderModel;
+}
+
+
+void BadgeuseModel::reload()
+{
     _presencesModel->reload();
     _studentsModel->reload();
     _optionsModel->reload();

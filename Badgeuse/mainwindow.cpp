@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 
-    // Init database settings
+    // Fill input database settings in "Paramètres > Base de données"
     _dbSettings = new QSettings("dbsettings.ini", QSettings::NativeFormat);
     ui->le_host->setText(_dbSettings->value("db_host", "").toString());
     ui->sb_port->setValue(_dbSettings->value("db_port", "").toInt());
@@ -25,28 +25,24 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->le_password->setText(_dbSettings->value("db_password", "").toString());
 
 
-    // Init models
+    // Init all models
     _badgeuseModel = new BadgeuseModel(*_dbSettings, this);
 
-
-
+    // Fill all tableviews
     ui->tv_presences->setModel(_badgeuseModel->getFilterProxyPresencesModel());
-
     ui->tv_students->setModel(_badgeuseModel->getFilterProxyStudentsModel());
-
     ui->tv_training->setModel(_badgeuseModel->getTrainingModel());
     ui->tv_options->setModel(_badgeuseModel->getOptionsModel());
 
 
 
-
-
     //------- CONNECT -------//
-
-    // Connect
-    connect(ui->pb_exportpresences, SIGNAL(clicked()), this, SLOT(exportPresences()));
+    /*
+     * Associate a action to a function
+     */
 
     // CSV export
+    connect(ui->pb_exportpresences, SIGNAL(clicked()), this, SLOT(exportPresences()));
 
     // Update options
     connect(ui->cb_pf_training, SIGNAL(currentIndexChanged(int)), this, SLOT(updatePfOptions()));
@@ -76,7 +72,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->le_sf_promotion, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setPromotionFilter(const QString&)));
     connect(ui->le_sf_promotion, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setPromotionFilter(const QString&)));
     connect(ui->le_sf_mail, SIGNAL(textChanged(const QString &)), _badgeuseModel->getFilterProxyStudentsModel(), SLOT(setMailFilter(const QString&)));
-
 
     // Database parameters
     connect(ui->pb_dbconnect, SIGNAL(clicked()), this, SLOT(dbSaveAndConnect()));
@@ -110,17 +105,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
+    // Init input filters
     initFilters();
 
-
-    ui->tv_presences->setColumnHidden(0, true);
-    ui->tv_students->setColumnHidden(0, true);
-    ui->tv_options->setColumnHidden(0, true);
-    ui->tv_training->setColumnHidden(0, true);
-
-
-//    ui->statusBar->sonPresenceFilterChangedhowMessage(tr("Status bar..."));
-
+    // Hide uuid column from each tableviews
+    ui->tv_presences->setColumnHidden(PresencesModel::UUID, true);
+    ui->tv_students->setColumnHidden(StudentsModel::UUID, true);
+    ui->tv_options->setColumnHidden(OptionsModel::UUID, true);
+    ui->tv_training->setColumnHidden(TrainingModel::UUID, true);
 
 }
 
@@ -167,6 +159,7 @@ void MainWindow::initFilters()
     ui->de_export_begin->setDate(QDate(QDate::currentDate().year(), 1, 1));
     ui->de_export_end->setDate(QDate(QDate::currentDate().year(), 12, 31));
 
+    // Update Presence Filter and Student Filter Options when training is changed
     updatePfOptions();
     updateSfOptions();
 
@@ -203,7 +196,6 @@ void MainWindow::updateSfOptions()
 
 void MainWindow::exportPresences()
 {
-
     QList<QMap<QString, QVariant>> values = _badgeuseModel->getPresencesModel()->getExport(
         ui->cb_export_student->currentData().toString(),
         (ui->gb_export_period->isChecked() ? ui->de_export_begin->dateTime() : QDateTime()),
@@ -215,14 +207,15 @@ void MainWindow::exportPresences()
         return;
     }
 
-
-    QString textData;
+    QString textData; // Value of the csv file
+    // Init column
     foreach( QString key, values.first().keys() ) {
         textData += key;
         textData += ", ";
     }
     textData += "\n";
 
+    // Init each retrieved rows
     for (QMap<QString, QVariant> row : values) {
         foreach (QVariant col, row) {
            textData += col.toString();
@@ -231,12 +224,13 @@ void MainWindow::exportPresences()
         textData += "\n";
     }
 
-    // .csv
+    // Open save dialog
     QString savefile = QFileDialog::getSaveFileName(this,
                                                     tr("Open File"),
                                                     QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
                                                     tr("*.csv"));
-    QFile csvFile(savefile.split(".",QString::SkipEmptyParts).at(0) + ".csv");
+    QFile csvFile(savefile.split(".",QString::SkipEmptyParts).at(0) + ".csv"); // Init csv name, if user put .csv or not we force it
+    // Write csv file
     if(csvFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         QTextStream out(&csvFile);
         out << textData;
@@ -245,13 +239,13 @@ void MainWindow::exportPresences()
 }
 
 
-/* Dialog add modify student, training, presence, option */
+// Dialog for add/modify : student, training, presence, option
 void MainWindow::openDialog()
 {
     QString selectedUuid;
     QTableView *tv = nullptr;
 
-    // Student
+    // On which table is the action
     if (sender() == ui->pb_modifystudent || sender() == ui->tv_students) {
         tv = ui->tv_students;
     } else if (sender() == ui->pb_modifypresence || sender() == ui->tv_presences) {
@@ -262,17 +256,13 @@ void MainWindow::openDialog()
         tv = ui->tv_options;
     }
 
+    // Check if on this table, a row is selected and retrieve the uuid
     if (tv != nullptr) {
-        QModelIndexList selectedList = tv->selectionModel()->selectedRows();
-        if (selectedList.length() > 0) {
-            selectedUuid = tv->model()->data(tv->model()->index(selectedList.at(0).row(),0)).toString();
-        } else {
-            QMessageBox::information(this, "Information", "Veuillez selectionner une ligne.");
-            return;
-        }
+        selectedUuid = getTvSelectedUuid(tv);
+        if (selectedUuid == nullptr) return;
     }
 
-
+    // Open the right dialog related to the action catched
     if (sender() == ui->pb_modifystudent || sender() == ui->pb_addstudent || sender() == ui->tv_students)
     {
         _studentsDialog = new StudentsDialog(_badgeuseModel->getStudentsModel(), _badgeuseModel->getTrainingModel(), _badgeuseModel->getPresencesModel(), _badgeuseModel->getOptionsModel(), this, selectedUuid);
@@ -308,7 +298,7 @@ void MainWindow::openDialog()
 
 }
 
-
+// Return the selected uuid, return nullptr if not found
 QString MainWindow::getTvSelectedUuid(QTableView *tv)
 {
     QModelIndexList selectedList = tv->selectionModel()->selectedRows();
@@ -319,8 +309,6 @@ QString MainWindow::getTvSelectedUuid(QTableView *tv)
         return nullptr;
     }
 }
-
-
 
 void MainWindow::deleteStudent()
 {
@@ -418,19 +406,18 @@ void MainWindow::deleteOption()
 }
 
 
-
-
 void MainWindow::dbSaveAndConnect()
 {
-     _dbSettings->setValue("db_host", ui->le_host->text());
-     _dbSettings->setValue("db_port", ui->sb_port->value());
-     _dbSettings->setValue("db_dbname", ui->le_dbname->text());
-     _dbSettings->setValue("db_user", ui->le_user->text());
-     _dbSettings->setValue("db_password", ui->le_password->text());
+    // Save input values in QSettrings
+    _dbSettings->setValue("db_host", ui->le_host->text());
+    _dbSettings->setValue("db_port", ui->sb_port->value());
+    _dbSettings->setValue("db_dbname", ui->le_dbname->text());
+    _dbSettings->setValue("db_user", ui->le_user->text());
+    _dbSettings->setValue("db_password", ui->le_password->text());
 
-     if (_badgeuseModel->initDbConnection()) {
-         QMessageBox::information(this, "Succès", "Connexion réussie.", QMessageBox::Ok);
-     }
+    if (_badgeuseModel->initDbConnection()) {
+        QMessageBox::information(this, "Succès", "Connexion réussie.", QMessageBox::Ok);
+    }
 }
 
 

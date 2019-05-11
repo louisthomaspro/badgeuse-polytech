@@ -9,7 +9,7 @@ QVariant TrainingModel::data(const QModelIndex &index, int role) const
 {
     QVariant value = QSqlQueryModel::data(index, role);
     if (value.isValid() && role == Qt::DisplayRole) {
-        if (index.column() == 0)
+        if (index.column() == UUID)
             return value.toByteArray().toHex();
     }
     return value;
